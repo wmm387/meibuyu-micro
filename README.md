@@ -3,10 +3,11 @@
 
 ### 1、如何使用
 在使用的项目下的composer.json 加入以下内容
-``` "repositories": {
+``` 
+"repositories": {
     "meibuyu/micro": {
         "type": "path",
-        "url": "d:/workspace/biubiubiu",#本库的具体地址，随意找个地方git clone下来
+        "url": "d:/workspace/biubiubiu",//本库的具体地址，随意找个地方git clone下来
         "options": {
             "symlink": true
         }
