@@ -1,0 +1,19 @@
+{
+    "name": "meibuyu/micro",
+    "description": "美不语微服务公共接口库",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "梁俊杰",
+            "email": "blithe8787@163.com"
+        }
+    ],
+    "require": {},
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "meibuyu\\micro\\": "src/"
+        }
+    }
+}
