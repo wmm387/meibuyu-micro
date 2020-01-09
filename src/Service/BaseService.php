@@ -46,13 +46,13 @@ class BaseService
 
     /**
      * 插入一条数据
-     * @param array $data
+     * @param array $params
      * @return array
      */
-    public function insert(array $data)
+    public function insert($params)
     {
         try {
-            $res = $this->model->insert($data);
+            $res = $this->model->insert($params);
             return Helper::success($res);
         } catch (Exception $e) {
             return Helper::fail('', $e->getMessage());
@@ -61,13 +61,13 @@ class BaseService
 
     /**
      * 新增一条数据
-     * @param array $data
+     * @param array $params
      * @return array
      */
-    public function create(array $data)
+    public function create($params)
     {
         try {
-            $model = $this->model->newInstance($data);
+            $model = $this->model->newInstance($params);
             $model->save();
             return Helper::success($model);
         } catch (Exception $e) {
@@ -78,14 +78,14 @@ class BaseService
     /**
      * 更新数据
      * @param $id
-     * @param array $data
+     * @param array $params
      * @return array
      */
-    public function update($id, array $data)
+    public function update($id, $params)
     {
         try {
             $model = $this->find($id);
-            $model->fill($data);
+            $model->fill($params);
             $model->save();
             return Helper::success($model);
         } catch (Exception $e) {
