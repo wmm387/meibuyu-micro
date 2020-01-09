@@ -9,7 +9,9 @@
             "email": "blithe8787@163.com"
         }
     ],
-    "require": {},
+    "require": {
+        "hyperf/db-connection": "^1.1@dev"
+    },
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
