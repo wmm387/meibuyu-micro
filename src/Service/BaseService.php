@@ -24,12 +24,12 @@ class BaseService
      * @param $id
      * @return Model | array
      */
-    public function find($id)
+    protected function find($id)
     {
         $model = $this->model->find($id);
-        if (!$model) {
-            return Helper::fail('', '数据不存在', 404);
-        }
+//        if (!$model) {
+//            return Helper::fail('', '数据不存在', 404);
+//        }
         return $model;
     }
 
@@ -41,6 +41,9 @@ class BaseService
     public function get($id)
     {
         $model = $this->find($id);
+        if (!$model) {
+            return Helper::fail('', '数据不存在', 404);
+        }
         return Helper::success($model);
     }
 
