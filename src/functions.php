@@ -1,5 +1,98 @@
 <?php
 
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\Utils\ApplicationContext;
+
+/**
+ * 容器实例
+ */
+if (!function_exists('container')) {
+    function container()
+    {
+        return ApplicationContext::getContainer();
+    }
+}
+
+/**
+ * redis 客户端实例
+ */
+if (!function_exists('redis')) {
+    function redis()
+    {
+        return container()->get(\Redis::class);
+    }
+}
+
+if (!function_exists('request')) {
+    /**
+     * 请求实例
+     * @param array|string|null $key
+     * @param mixed $default
+     * @return RequestInterface|string|array|mixed
+     */
+    function request($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return container()->get(RequestInterface::class);
+        }
+
+        if (is_array($key)) {
+            return container()->get(RequestInterface::class)->inputs($key);
+        }
+
+        $value = container()->get(RequestInterface::class)->input($key);
+
+        return is_null($value) ? value($default) : $value;
+    }
+}
+
+/**
+ * 响应实例
+ */
+if (!function_exists('response')) {
+    function response()
+    {
+        return container()->get(ResponseInterface::class);
+    }
+}
+
+if (!function_exists('success')) {
+    /**
+     * 成功响应实例
+     * @param string $msg
+     * @param mixed $data
+     * @param int $code
+     * @return mixed
+     */
+    function success($msg = '', $data = null, $code = 200)
+    {
+        return response()->json([
+            'msg' => $msg,
+            'data' => $data,
+            'code' => $code
+        ]);
+    }
+}
+
+if (!function_exists('fail')) {
+    /**
+     * 失败响应实例
+     * @param string $msg
+     * @param mixed $data
+     * @param int $code
+     * @return mixed
+     */
+    function fail($msg = '', $data = null, $code = 400)
+    {
+        return response()->json([
+            'msg' => $msg,
+            'data' => $data,
+            'code' => $code
+        ]);
+    }
+}
+
 if (!function_exists('decimal_to_abc')) {
     /**
      * 数字转换对应26个字母
