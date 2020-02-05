@@ -1,24 +1,26 @@
 {
-    "name": "meibuyu/micro",
-    "description": "美不语微服务公共接口库",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "梁俊杰",
-            "email": "blithe8787@163.com"
-        }
-    ],
-    "require": {
-        "hyperf/db-connection": "^1.1@dev"
-    },
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "Meibuyu\\Micro\\": "src/"
-        },
-        "files": [
-            "src/functions.php"
-        ]
+  "name": "meibuyu/micro",
+  "description": "美不语微服务公共接口库",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "梁俊杰",
+      "email": "blithe8787@163.com"
     }
+  ],
+  "require": {
+    "ext-json": "*",
+    "hyperf/db-connection": "^1.1@dev",
+    "hyperf/validation": "^1.1@dev"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "Meibuyu\\Micro\\": "src/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  }
 }
