@@ -3,7 +3,7 @@
 namespace Meibuyu\Micro\Validator\Contracts;
 
 use Hyperf\Utils\MessageBag;
-use Meibuyu\Micro\Validator\Exceptions\ValidatorException;
+use Meibuyu\Micro\Exceptions\ValidatorException;
 
 interface ValidatorInterface
 {

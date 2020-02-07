@@ -1,6 +1,6 @@
 <?php
 
-namespace Meibuyu\Micro\Validator\Exceptions;
+namespace Meibuyu\Micro\Exceptions;
 
 use Hyperf\Utils\Contracts\MessageBag;
 

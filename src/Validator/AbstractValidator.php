@@ -3,8 +3,8 @@
 namespace Meibuyu\Micro\Validator;
 
 use Hyperf\Utils\MessageBag;
+use Meibuyu\Micro\Exceptions\ValidatorException;
 use Meibuyu\Micro\Validator\Contracts\ValidatorInterface;
-use Meibuyu\Micro\Validator\Exceptions\ValidatorException;
 
 abstract class AbstractValidator implements ValidatorInterface
 {
