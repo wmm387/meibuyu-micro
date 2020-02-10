@@ -12,6 +12,7 @@ namespace Meibuyu\Micro\Repository\Eloquent;
 use Hyperf\DbConnection\Model\Model;
 use Meibuyu\Micro\Exceptions\HttpResponseException;
 use Meibuyu\Micro\Exceptions\RepositoryException;
+use Meibuyu\Micro\Exceptions\ValidatorException;
 use Meibuyu\Micro\Repository\Contracts\RepositoryInterface;
 use Meibuyu\Micro\Validator\Contracts\ValidatorInterface;
 use Psr\Container\ContainerInterface;
@@ -96,7 +97,6 @@ abstract class BaseRepository implements RepositoryInterface
         return null;
     }
 
-
     /**
      * @param $id
      * @param array $columns
@@ -121,20 +121,52 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->model->get($columns);
     }
 
+    public function with($relations)
+    {
+        $this->model = $this->model->with($relations);
+        return $this;
+    }
+
+    public function orderBy($column, $direction = 'asc')
+    {
+        $this->model = $this->model->orderBy($column, $direction);
+
+        return $this;
+    }
+
     public function paginate($perPage = 10, $columns = ['*'])
     {
         return $this->model->paginate($perPage, $columns);
     }
 
+    /**
+     * @param array $attributes
+     * @return Model
+     * @throws ValidatorException
+     */
     public function create(array $attributes)
     {
+        if (!is_null($this->validator)) {
+            $this->validator->with($attributes)->passesOrFail(ValidatorInterface::RULE_CREATE);
+        }
+
         $model = $this->model->newInstance($attributes);
         $model->save();
         return $model;
     }
 
+    /**
+     * @param array $attributes
+     * @param $id
+     * @return Model | mixed
+     * @throws ValidatorException
+     */
     public function update(array $attributes, $id)
     {
+        if (!is_null($this->validator)) {
+            $this->validator->with($attributes)->setId($id)->passesOrFail(ValidatorInterface::RULE_UPDATE);
+        }
+
         $model = $this->model->findOrFail($id);
         $model->fill($attributes);
         $model->save();
@@ -143,19 +175,23 @@ abstract class BaseRepository implements RepositoryInterface
 
     /**
      * @param $id
-     * @return bool|null
-     * @throws \Exception
+     * @return bool|mixed
+     * @throws HttpResponseException
      */
     public function delete($id)
     {
         $model = $this->find($id);
-        return $model->delete();
+        $delete = $model->delete();
+        if ($delete !== false) {
+            return $delete;
+        } else {
+            throw new HttpResponseException('删除失败,请刷新重试');
+        }
     }
 
     public function findBy($field, $value, $columns = ['*'])
     {
         return $this->model->where($field, '=', $value)->first($columns);
     }
-
 
 }
