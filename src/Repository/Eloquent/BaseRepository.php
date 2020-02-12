@@ -10,6 +10,7 @@
 namespace Meibuyu\Micro\Repository\Eloquent;
 
 use Hyperf\DbConnection\Model\Model;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Meibuyu\Micro\Exceptions\HttpResponseException;
 use Meibuyu\Micro\Exceptions\RepositoryException;
 use Meibuyu\Micro\Exceptions\ValidatorException;
@@ -25,6 +26,11 @@ abstract class BaseRepository implements RepositoryInterface
     private $container;
 
     /**
+     * @var RequestInterface
+     */
+    protected $request;
+
+    /**
      * @var Model
      */
     protected $model;
@@ -37,11 +43,13 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * BaseRepository constructor.
      * @param ContainerInterface $container
+     * @param RequestInterface $request
      * @throws RepositoryException
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, RequestInterface $request)
     {
         $this->container = $container;
+        $this->request = $request;
         $this->makeModel();
         $this->makeValidator();
     }
@@ -100,7 +108,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * @param $id
      * @param array $columns
-     * @return mixed
+     * @return mixed|Model
      * @throws HttpResponseException
      */
     public function find($id, $columns = ['*'])
@@ -123,20 +131,12 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function list()
     {
-        return $this->model->all();
+        return $this->all();
     }
 
-    public function with($relations)
+    public function show($id)
     {
-        $this->model = $this->model->with($relations);
-        return $this;
-    }
-
-    public function orderBy($column, $direction = 'asc')
-    {
-        $this->model = $this->model->orderBy($column, $direction);
-
-        return $this;
+        return $this->find($id);
     }
 
     public function paginate($perPage = 10, $columns = ['*'])
@@ -164,6 +164,7 @@ abstract class BaseRepository implements RepositoryInterface
      * @param array $attributes
      * @param $id
      * @return Model | mixed
+     * @throws HttpResponseException
      * @throws ValidatorException
      */
     public function update(array $attributes, $id)
@@ -172,7 +173,7 @@ abstract class BaseRepository implements RepositoryInterface
             $this->validator->with($attributes)->setId($id)->passesOrFail(ValidatorInterface::RULE_UPDATE);
         }
 
-        $model = $this->model->findOrFail($id);
+        $model = $this->find($id);
         $model->fill($attributes);
         $model->save();
         return $model;
@@ -186,7 +187,11 @@ abstract class BaseRepository implements RepositoryInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $delete = $model->delete();
+        try {
+            $delete = $model->delete();
+        } catch (\Exception $e) {
+            throw new HttpResponseException($e->getMessage());
+        }
         if ($delete !== false) {
             return $delete;
         } else {

@@ -13,6 +13,12 @@ interface RepositoryInterface
 {
     public function list();
 
+    public function show($id);
+
+    /**
+     * @param array $columns
+     * @return mixed
+     */
     public function all($columns = array('*'));
 
     public function paginate($perPage = 10, $columns = array('*'));
@@ -27,22 +33,4 @@ interface RepositoryInterface
 
     public function findBy($field, $value, $columns = array('*'));
 
-    /**
-     * Load relations
-     *
-     * @param $relations
-     *
-     * @return $this
-     */
-    public function with($relations);
-
-    /**
-     * Order collection by a given column
-     *
-     * @param string $column
-     * @param string $direction
-     *
-     * @return $this
-     */
-    public function orderBy($column, $direction = 'asc');
 }
