@@ -11,6 +11,8 @@ namespace Meibuyu\Micro\Repository\Contracts;
 
 interface RepositoryInterface
 {
+    public function list();
+
     public function all($columns = array('*'));
 
     public function paginate($perPage = 10, $columns = array('*'));

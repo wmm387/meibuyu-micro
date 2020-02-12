@@ -121,6 +121,11 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->model->get($columns);
     }
 
+    public function list()
+    {
+        return $this->model->all();
+    }
+
     public function with($relations)
     {
         $this->model = $this->model->with($relations);
