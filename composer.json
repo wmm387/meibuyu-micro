@@ -11,6 +11,7 @@
   ],
   "require": {
     "ext-json": "*",
+    "ext-redis": "*",
     "hyperf/db-connection": "^1.1@dev",
     "hyperf/validation": "^1.1@dev",
     "hyperf/command": "^1.1@dev"

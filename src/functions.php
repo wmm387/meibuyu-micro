@@ -8,9 +8,13 @@ use Hyperf\Utils\ApplicationContext;
  * 容器实例
  */
 if (!function_exists('container')) {
-    function container()
+    function container($key = null)
     {
-        return ApplicationContext::getContainer();
+        if (is_null($key)) {
+            return ApplicationContext::getContainer();
+        } else {
+            return ApplicationContext::getContainer()->get($key);
+        }
     }
 }
 
@@ -20,7 +24,7 @@ if (!function_exists('container')) {
 if (!function_exists('redis')) {
     function redis()
     {
-        return container()->get(\Redis::class);
+        return container(Redis::class);
     }
 }
 
@@ -34,14 +38,14 @@ if (!function_exists('request')) {
     function request($key = null, $default = null)
     {
         if (is_null($key)) {
-            return container()->get(RequestInterface::class);
+            return container(RequestInterface::class);
         }
 
         if (is_array($key)) {
-            return container()->get(RequestInterface::class)->inputs($key);
+            return container(RequestInterface::class)->inputs($key);
         }
 
-        $value = container()->get(RequestInterface::class)->input($key);
+        $value = container(RequestInterface::class)->input($key);
 
         return is_null($value) ? value($default) : $value;
     }
@@ -53,7 +57,7 @@ if (!function_exists('request')) {
 if (!function_exists('response')) {
     function response()
     {
-        return container()->get(ResponseInterface::class);
+        return container(ResponseInterface::class);
     }
 }
 
@@ -259,3 +263,27 @@ if (!function_exists('now')) {
         return date('Y-m-d h:i:s', time());
     }
 }
+
+if (!function_exists('get_tree_id')) {
+    /**
+     * @param $array
+     * @param int $pid
+     * @param int $level
+     * @return array
+     */
+    function get_tree_id($array, $pid = 0, $level = 0)
+    {
+        static $list = [];
+        foreach ($array as $key => $value) {
+            if ($value['parent_id'] == $pid || $value['id'] == $pid) {
+                $value['level'] = $level;
+                $list[] = $value['id'];
+                unset($array[$key]);
+                get_tree_id($array, $value['id'], $level + 1);
+            }
+        }
+        return $list;
+    }
+}
+
+
