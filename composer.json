@@ -12,7 +12,8 @@
   "require": {
     "ext-json": "*",
     "hyperf/db-connection": "^1.1@dev",
-    "hyperf/validation": "^1.1@dev"
+    "hyperf/validation": "^1.1@dev",
+    "hyperf/command": "^1.1@dev"
   },
   "minimum-stability": "dev",
   "autoload": {
@@ -22,5 +23,10 @@
     "files": [
       "src/functions.php"
     ]
+  },
+  "extra": {
+    "hyperf": {
+      "config": "Meibuyu\\Micro\\ConfigProvider"
+    }
   }
 }

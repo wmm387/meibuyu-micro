@@ -1,0 +1,32 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Auto generated file.
+ * Date: $DATE$
+ * Time: $TIME$
+ */
+
+$NAMESPACE$
+
+use Meibuyu\Micro\Repository\Eloquent\BaseRepository;
+use $INTERFACE$;
+$VALIDATOR$
+
+/**
+ * Class $CLASS$RepositoryEloquent.
+ *
+ * @package $NAMESPACE$
+ */
+class $CLASS$RepositoryEloquent extends BaseRepository implements $CLASS$Repository
+{
+
+    public function model()
+    {
+        //
+    }
+
+    $VALIDATOR_METHOD$
+
+}

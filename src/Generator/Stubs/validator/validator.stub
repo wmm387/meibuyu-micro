@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Auto generated file.
+ * Date: $DATE$
+ * Time: $TIME$
+ */
+
+$NAMESPACE$
+
+use Meibuyu\Micro\Validator\Contracts\ValidatorInterface;
+use Meibuyu\Micro\Validator\HyperfValidator;
+
+class $CLASS$Validator extends HyperfValidator
+{
+
+    protected $rules = [
+        ValidatorInterface::RULE_CREATE => [],
+        ValidatorInterface::RULE_UPDATE => [],
+    ];
+
+}
