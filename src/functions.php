@@ -275,7 +275,7 @@ if (!function_exists('get_tree_id')) {
     {
         static $list = [];
         foreach ($array as $key => $value) {
-            if ($value['parent_id'] == $pid || $value['id'] == $pid) {
+            if ($value['pid'] == $pid || $value['id'] == $pid) {
                 $value['level'] = $level;
                 $list[] = $value['id'];
                 unset($array[$key]);

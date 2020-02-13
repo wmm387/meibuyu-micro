@@ -9,6 +9,7 @@
 
 namespace Meibuyu\Micro\Repository\Eloquent;
 
+use Hyperf\Database\Model\Builder;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Meibuyu\Micro\Exceptions\HttpResponseException;
@@ -31,7 +32,7 @@ abstract class BaseRepository implements RepositoryInterface
     protected $request;
 
     /**
-     * @var Model
+     * @var Model|Builder
      */
     protected $model;
 
@@ -134,6 +135,11 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->all();
     }
 
+    /**
+     * @param $id
+     * @return Model|mixed
+     * @throws HttpResponseException
+     */
     public function show($id)
     {
         return $this->find($id);
