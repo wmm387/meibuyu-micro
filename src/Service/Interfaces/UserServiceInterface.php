@@ -30,13 +30,6 @@ interface UserServiceInterface
     public function get($id);
 
     /**
-     * 新增数据
-     * @param array $params
-     * @return mixed
-     */
-    public function create(array $params);
-
-    /**
      * 更新数据
      * @param $id
      * @param array $params
@@ -44,10 +37,4 @@ interface UserServiceInterface
      */
     public function update($id, $params);
 
-    /**
-     * 删除数据
-     * @param $id
-     * @return mixed
-     */
-    public function delete($id);
 }
