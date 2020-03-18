@@ -15,9 +15,23 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
+            'exceptions' => [
+                'handler' => [
+                    'http' => [
+                        \Meibuyu\Micro\Exceptions\Handler\MicroExceptionHandler::class,
+                    ],
+                ],
+            ],
             'commands' => [
                 \Meibuyu\Micro\Command\RepositoryCommand::class,
                 \Meibuyu\Micro\Command\ValidatorCommand::class,
+            ],
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                ],
             ],
         ];
     }
