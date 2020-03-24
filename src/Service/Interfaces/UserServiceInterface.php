@@ -30,6 +30,14 @@ interface UserServiceInterface
     public function get($id);
 
     /**
+     * 通过id列表获取用户数组
+     * @param array $idList
+     * @param array $columns
+     * @return mixed
+     */
+    public function getByIdList(array $idList, array $columns = ['*']);
+
+    /**
      * 更新数据
      * @param $id
      * @param array $params
