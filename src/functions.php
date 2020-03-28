@@ -18,13 +18,33 @@ if (!function_exists('container')) {
     }
 }
 
-/**
- * redis 客户端实例
- */
 if (!function_exists('redis')) {
+    /**
+     * 获取redis客户端实例
+     * @return Redis|mixed
+     */
     function redis()
     {
         return container(Redis::class);
+    }
+}
+
+/**
+ * token
+ */
+if (!function_exists('token')) {
+    function token()
+    {
+        $token = request()->getHeader('Authorization')[0] ?? '';
+        if (strlen($token) > 0) {
+            $token = ucfirst($token);
+            $arr = explode('Bearer ', $token);
+            $token = $arr[1] ?? '';
+            if (strlen($token) > 0) {
+                return $token;
+            }
+        }
+        return false;
     }
 }
 
