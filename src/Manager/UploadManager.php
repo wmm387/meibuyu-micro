@@ -71,14 +71,13 @@ class UploadManager
         if ($file->isValid()) {
             $extension = $file->getExtension();
             // 通过扩展名判断类型
-            if (!in_array($extension, $options['mime'])) {
+            if (!in_array(strtolower($extension), $options['mime'])) {
                 throw new HttpResponseException('文件类型不支持,目前只支持' . implode(',', $options['mime']));
             }
             // 判断文件大小
             if ($file->getSize() > $options['maxSize']) {
                 throw new HttpResponseException('文件超出系统规定的大小,最大不能超过' . $options['maxSize']);
             }
-
             // 文件重命名,由当前日期时间 + 唯一ID + 扩展名
             $fileName = date('YmdHis') . uniqid() . '.' . $extension;
             $savePath = self::parsePath($options) . $fileName;
