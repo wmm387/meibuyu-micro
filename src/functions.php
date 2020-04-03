@@ -71,10 +71,11 @@ if (!function_exists('request')) {
     }
 }
 
-/**
- * 响应实例
- */
 if (!function_exists('response')) {
+    /**
+     * 响应实例
+     * @return mixed|ResponseInterface
+     */
     function response()
     {
         return container(ResponseInterface::class);

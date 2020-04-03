@@ -12,9 +12,10 @@
   "require": {
     "ext-json": "*",
     "ext-redis": "*",
-    "hyperf/db-connection": "^1.1@dev",
-    "hyperf/validation": "^1.1@dev",
-    "hyperf/command": "^1.1@dev"
+    "hyperf/framework": "~1.1.0",
+    "hyperf/db-connection": "~1.1.0",
+    "hyperf/validation": "~1.1.0",
+    "hyperf/command": "~1.1.0"
   },
   "minimum-stability": "dev",
   "autoload": {
