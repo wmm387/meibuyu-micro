@@ -3,6 +3,7 @@
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Redis\Redis;
 
 /**
  * 容器实例

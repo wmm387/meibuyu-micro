@@ -15,7 +15,8 @@
     "hyperf/framework": "~1.1.0",
     "hyperf/db-connection": "~1.1.0",
     "hyperf/validation": "~1.1.0",
-    "hyperf/command": "~1.1.0"
+    "hyperf/command": "~1.1.0",
+    "hyperf/redis": "~1.1.0"
   },
   "minimum-stability": "dev",
   "autoload": {
