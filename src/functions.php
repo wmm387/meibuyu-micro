@@ -2,8 +2,8 @@
 
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Redis\Redis;
+use Hyperf\Utils\ApplicationContext;
 
 /**
  * 容器实例
@@ -288,24 +288,64 @@ if (!function_exists('now')) {
 
 if (!function_exists('get_tree_id')) {
     /**
-     * @param $array
-     * @param int $pid
-     * @param int $level
+     * @param array $array
+     * @param array $pid
      * @return array
      */
-    function get_tree_id($array, $pid = 0, $level = 0)
+    function get_tree_id(array $array, $pids = [0])
     {
-        static $list = [];
+        $list = [];
         foreach ($array as $key => $value) {
-            if ($value['pid'] == $pid || $value['id'] == $pid) {
-                $value['level'] = $level;
+            if (in_array($value['pid'], $pids) || in_array($value['id'], $pids)) {
                 $list[] = $value['id'];
                 unset($array[$key]);
-                get_tree_id($array, $value['id'], $level + 1);
             }
         }
-        return $list;
+        if ($list == []) return [];
+        $children = get_tree_id($array, $list);
+        return array_merge($list, $children);
     }
 }
 
+if (!function_exists('get_tree')) {
+    /**
+     * 树状的算法
+     * @param array $array 代转化数组
+     * @param int $pid 起始节点
+     * @return array
+     */
+    function get_tree($array = [], $pid = 0)
+    {
+        $list = [];
+        // 获取每个节点的直属子节点，*记住是直属，不是所有子节点
+        foreach ($array as $item) {
+            if (isset($list[$item['pid']])) {
+                $list[$item['pid']][] = $item;
+            } else {
+                $list[$item['pid']] = [$item];
+            }
+        }
+        return format_tree($list);
+    }
+}
 
+if (!function_exists('format_tree')) {
+    /**
+     * 利用递归格式化每个节点
+     * @param array $array 代转化数组
+     * @param int $pid 起始节点
+     * @return array
+     */
+    function format_tree(array $array = [], $pid = 0)
+    {
+        $result = [];
+        if (!isset($array[$pid])) {
+            return $result;
+        }
+        foreach ($array[$pid] as $item) {
+            $item['children'] = format_tree($array, $item['id']);
+            array_push($result, $item);
+        }
+        return $result;
+    }
+}
