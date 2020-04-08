@@ -1,9 +1,12 @@
 <?php
 
+use Hyperf\Cache\Listener\DeleteListenerEvent;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
+use Psr\EventDispatcher\EventDispatcherInterface;
+
 
 /**
  * 容器实例
@@ -347,5 +350,23 @@ if (!function_exists('format_tree')) {
             array_push($result, $item);
         }
         return $result;
+    }
+}
+
+if (!function_exists('flushAnnotationCache')) {
+    /**
+     * 刷新注解缓存，清楚注解缓存
+     * @param string $listener
+     * @param mixed $keys
+     * @return bool
+     */
+    function flushAnnotationCache($listener, $keys)
+    {
+        $keys = is_array($keys) ? $keys : [$keys];
+        $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
+        foreach ($keys as $key) {
+            $dispatcher->dispatch(new DeleteListenerEvent($listener, [$key]));
+        }
+        return true;
     }
 }

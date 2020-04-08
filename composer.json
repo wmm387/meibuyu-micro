@@ -12,6 +12,7 @@
   "require": {
     "ext-json": "*",
     "ext-redis": "*",
+    "hyperf/cache": "~1.1.0",
     "hyperf/framework": "~1.1.0",
     "hyperf/db-connection": "~1.1.0",
     "hyperf/validation": "~1.1.0",
