@@ -10,17 +10,6 @@ namespace Meibuyu\Micro\Service\Interfaces;
 
 interface UserServiceInterface
 {
-    /**
-     * 获取列表数据
-     * @param array $params
-     * $params = [
-     *     'keyword' => '',
-     *     'page' => 1, 当前第几页
-     *     'page_size' => 10, 每页展示数,默认10
-     * ]
-     * @return mixed
-     */
-    public function search($params);
 
     /**
      * 获取单个数据
@@ -38,11 +27,10 @@ interface UserServiceInterface
     public function getByIdList(array $idList, array $columns = ['*']);
 
     /**
-     * 更新数据
-     * @param $id
-     * @param array $params
-     * @return mixed
+     * @param int $userId
+     * @param string $perm
+     * @return bool
      */
-    public function update($id, $params);
+    public function checkPerm(int $userId, string $perm): bool;
 
 }
