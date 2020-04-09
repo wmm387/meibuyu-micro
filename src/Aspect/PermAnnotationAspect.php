@@ -95,6 +95,7 @@ class PermAnnotationAspect extends AbstractAspect
         if ($prefix[-1] !== '_') {
             $prefix .= '_';
         }
+        $methodName = $this->parseMethodName($methodName);
         return $appName . '_' . $prefix . $methodName;
     }
 
@@ -106,6 +107,15 @@ class PermAnnotationAspect extends AbstractAspect
         $prefix = Str::snake($handledNamespace);
         $prefix = str_replace('__', '_', $prefix);
         return $prefix;
+    }
+
+    // 处理方法名
+    protected function parseMethodName(string $methodName): string
+    {
+        $name = Str::snake($methodName);
+        $name = str_replace('__', '_', $name);
+        trim($name, '_');
+        return $name;
     }
 
     // 获取注解
