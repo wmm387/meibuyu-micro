@@ -8,11 +8,13 @@
 
 namespace Meibuyu\Micro\Aspect;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Utils\Str;
+use Meibuyu\Micro\Annotation\AutoPerm;
 use Meibuyu\Micro\Annotation\Perm;
 use Meibuyu\Micro\Exceptions\HttpResponseException;
 use Meibuyu\Micro\Handler\PermHandler;
@@ -29,8 +31,15 @@ class PermAnnotationAspect extends AbstractAspect
      */
     private $permHandler;
 
+    /**
+     * @Inject
+     * @var ConfigInterface
+     */
+    protected $config;
+
     public $annotations = [
         Perm::class,
+        AutoPerm::class,
     ];
 
     /**
@@ -41,43 +50,72 @@ class PermAnnotationAspect extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $perm = $this->getPermName($proceedingJoinPoint);
-        if ($this->permHandler->check($perm)) {
-            return $proceedingJoinPoint->process();
-        } else {
-            throw new HttpResponseException('当前用户没有此操作权限');
+        $perm = $this->genPermName($proceedingJoinPoint);
+        if ($perm) {
+            if ($this->permHandler->check($perm)) {
+                return $proceedingJoinPoint->process();
+            } else {
+                throw new HttpResponseException('当前用户没有此操作权限');
+            }
         }
+        return $proceedingJoinPoint->process();
     }
 
-    public function getPermName(ProceedingJoinPoint $proceedingJoinPoint)
+    // 生成权限名
+    public function genPermName(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        /** @var Perm $annotation */
-        $annotation = $this->getAnnotation($proceedingJoinPoint);
-        if ($annotation->name) {
-            return $annotation->name;
+        /** @var AutoPerm $autoPerm */
+        /** @var Perm $perm */
+        [$autoPerm, $perm] = $this->getAnnotations($proceedingJoinPoint);
+        if ($perm && $perm->name) {
+            // 如果有指定权限名,直接返回
+            return $perm->name;
         } else {
-            $className = $proceedingJoinPoint->className;
             $methodName = $proceedingJoinPoint->methodName;
-            return $this->getPrefix($className) . $methodName;
+            $className = $proceedingJoinPoint->className;
+            if ($autoPerm) {
+                if (in_array($methodName, $autoPerm->exclude)) {
+                    // 排除不鉴权的方法
+                    return false;
+                }
+                if ($autoPerm->prefix) {
+                    // 如果有指定前缀,直接拼接返回
+                    return $this->parseName($autoPerm->prefix, $methodName);
+                }
+            }
+            return $this->parseName($this->genPrefix($className), $methodName);
         }
     }
 
-    protected function getPrefix(string $className): string
+    // 拼接权限名
+    protected function parseName($prefix, $methodName)
+    {
+        // 注意每个应用的app_name的唯一性
+        $appName = $this->config->get('app_name');
+        if ($prefix[-1] !== '_') {
+            $prefix .= '_';
+        }
+        return $appName . '_' . $prefix . $methodName;
+    }
+
+    // 生成前缀
+    protected function genPrefix(string $className): string
     {
         $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controller\\'));
         $handledNamespace = str_replace('\\', '_', $handledNamespace);
         $prefix = Str::snake($handledNamespace);
         $prefix = str_replace('__', '_', $prefix);
-        if ($prefix[-1] !== '_') {
-            $prefix .= '_';
-        }
         return $prefix;
     }
 
-    public function getAnnotation(ProceedingJoinPoint $proceedingJoinPoint)
+    // 获取注解
+    public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        return $metadata->method[Perm::class] ?? null;
+        return [
+            $metadata->class[AutoPerm::class] ?? null,
+            $metadata->method[Perm::class] ?? null
+        ];
     }
 
 }
