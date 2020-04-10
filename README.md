@@ -52,7 +52,7 @@ class UserInfoController {}
 function getUser {}
 ```
 参数: 
-> name, 前缀(字符串),默认为小写控制器名拼接方法名(user),如果填写指定的名称,会覆盖@AutoPerm的prefix和exclude
+> name, 前缀(字符串),默认为蛇形方法名(user)
 ```
 /**
  * @Perm("get_user")

@@ -67,36 +67,24 @@ class PermAnnotationAspect extends AbstractAspect
         /** @var AutoPerm $autoPerm */
         /** @var Perm $perm */
         [$autoPerm, $perm] = $this->getAnnotations($proceedingJoinPoint);
-        if ($perm && $perm->name) {
-            // 如果有指定权限名,直接返回
-            return $perm->name;
-        } else {
-            $methodName = $proceedingJoinPoint->methodName;
-            $className = $proceedingJoinPoint->className;
-            if ($autoPerm) {
-                if (in_array($methodName, $autoPerm->exclude)) {
-                    // 排除不鉴权的方法
-                    return false;
-                }
-                if ($autoPerm->prefix) {
-                    // 如果有指定前缀,直接拼接返回
-                    return $this->parseName($autoPerm->prefix, $methodName);
-                }
-            }
-            return $this->parseName($this->genPrefix($className), $methodName);
+        $className = $proceedingJoinPoint->className;
+        $methodName = $proceedingJoinPoint->methodName;
+        if ($autoPerm && in_array($methodName, $autoPerm->exclude)) {
+            return false; // 跳过不需要鉴权的方法
         }
+        $prefix = $autoPerm && $autoPerm->prefix ? $autoPerm->prefix : $this->genPrefix($className);
+        $name = $perm && $perm->name ? $perm->name : $this->genName($methodName);
+        return $this->parsePermName($prefix, $name);
     }
 
     // 拼接权限名
-    protected function parseName($prefix, $methodName)
+    protected function parsePermName($prefix, $name)
     {
         // 注意每个应用的app_name的唯一性
-        $appName = $this->config->get('app_name');
-        if ($prefix[-1] !== '_') {
-            $prefix .= '_';
-        }
-        $methodName = $this->parseMethodName($methodName);
-        return $appName . '_' . $prefix . $methodName;
+        $appName = trim($this->config->get('app_name'), '_');
+        $prefix = trim($prefix, '_');
+        $name = trim($name, '_');
+        return $appName . '_' . $prefix . '_' . $name;
     }
 
     // 生成前缀
@@ -109,13 +97,12 @@ class PermAnnotationAspect extends AbstractAspect
         return $prefix;
     }
 
-    // 处理方法名
-    protected function parseMethodName(string $methodName): string
+    // 生成名称
+    protected function genName(string $methodName): string
     {
-        $name = Str::snake($methodName);
-        $name = str_replace('__', '_', $name);
-        trim($name, '_');
-        return $name;
+        $methodName = Str::snake($methodName);
+        $methodName = str_replace('__', '_', $methodName);
+        return $methodName;
     }
 
     // 获取注解
