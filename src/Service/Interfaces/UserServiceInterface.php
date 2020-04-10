@@ -27,10 +27,19 @@ interface UserServiceInterface
     public function getByIdList(array $idList, array $columns = ['*']);
 
     /**
+     * 鉴权
      * @param int $userId
      * @param string $perm
      * @return bool
      */
     public function checkPerm(int $userId, string $perm): bool;
+
+    /**
+     * 获取用户拥有某个应用的所有权限
+     * @param int $userId
+     * @param string $appName 为空获取全部权限
+     * @return array
+     */
+    public function getPerms(int $userId, string $appName = null): array;
 
 }
