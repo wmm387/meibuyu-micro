@@ -9,7 +9,6 @@
 
 namespace Meibuyu\Micro;
 
-
 class ConfigProvider
 {
     public function __invoke(): array
@@ -33,7 +32,14 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'message',
+                    'description' => 'message',
+                    'source' => __DIR__ . '/../publish/message.php',
+                    'destination' => BASE_PATH . '/config/autoload/message.php',
+                ],
+            ],
         ];
     }
-
 }
