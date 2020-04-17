@@ -93,6 +93,48 @@ class UploadManager
     }
 
     /**
+     * 生成头像
+     * @return string|string[]
+     */
+    public static function createAvatar()
+    {
+        $img = imagecreatetruecolor(180, 180);
+        $bgColor = imagecolorallocate($img, 240, 240, 240);
+        imagefill($img, 0, 0, $bgColor);
+        $color = imagecolorallocate($img, rand(90, 230), rand(90, 230), rand(90, 230));
+
+        for ($i = 0; $i < 90; $i++) {
+            for ($y = 0; $y < 180; $y++) {
+                $ad = rand(10, 50); //随机
+                if ($ad % 3 == 0) {
+                    for ($xx = $i; $xx < $i + 15; $xx++) {
+                        for ($yy = $y; $yy < $y + 30; $yy++) {
+                            imagesetpixel($img, $xx, $yy, $color);
+                        }
+                    }
+                    $is = ((90 - $i) + 90) - 15; //计算偏移
+                    for ($xx = $is; $xx < $is + 15; $xx++) {
+                        for ($yy = $y; $yy < $y + 30; $yy++) {
+                            imagesetpixel($img, $xx, $yy, $color);
+                        }
+                    }
+                }
+                $y += 14;
+            }
+            $i += 14;
+        }
+
+        $path = self::$pathPrefix . 'avatar/default/';
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+        $fileName = $path . date('YmdHis') . uniqid() . '.png';
+        imagepng($img, $fileName);
+        imagedestroy($img);//释放内存
+        return str_replace('public/', '', $fileName);
+    }
+
+    /**
      * 处理保存路径
      * @param $options
      * @return string
