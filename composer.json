@@ -18,7 +18,8 @@
     "hyperf/validation": "~1.1.0",
     "hyperf/command": "~1.1.0",
     "hyperf/redis": "~1.1.0",
-    "hyperf/guzzle": "^1.1@dev"
+    "hyperf/guzzle": "^1.1@dev",
+    "hyperf/config": "^1.1@dev"
   },
   "minimum-stability": "dev",
   "autoload": {

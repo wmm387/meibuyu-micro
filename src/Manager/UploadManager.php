@@ -76,7 +76,7 @@ class UploadManager
             }
             // 判断文件大小
             if ($file->getSize() > $options['maxSize']) {
-                throw new HttpResponseException('文件超出系统规定的大小,最大不能超过' . $options['maxSize']);
+                throw new HttpResponseException('文件超出系统规定的大小,最大不能超过' . num_2_file_size($options['maxSize']));
             }
             // 文件重命名,由当前日期时间 + 唯一ID + 扩展名
             $fileName = date('YmdHis') . uniqid() . '.' . $extension;
@@ -164,6 +164,16 @@ class UploadManager
             return self::$options;
         } else {
             return array_merge(self::$options, $options);
+        }
+    }
+
+    public static function deleteFile($path)
+    {
+        $path = str_replace(config('app_domain'), '', $path);
+        $path = ltrim($path, '/');
+        $path = 'public/' . $path;
+        if (file_exists($path)) {
+            unlink($path);
         }
     }
 
