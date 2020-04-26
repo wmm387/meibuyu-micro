@@ -380,17 +380,20 @@ if (!function_exists('num_2_file_size')) {
     function num_2_file_size($num)
     {
         $p = 0;
-        $format = 'KB';
+        $format = 'B';
         if ($num > 0 && $num < 1024) {
             return number_format($num) . ' ' . $format;
         } else if ($num >= 1024 && $num < pow(1024, 2)) {
             $p = 1;
-            $format = 'MB';
+            $format = 'KB';
         } else if ($num >= pow(1024, 2) && $num < pow(1024, 3)) {
             $p = 2;
-            $format = 'GB';
+            $format = 'MB';
         } else if ($num >= pow(1024, 3) && $num < pow(1024, 4)) {
             $p = 3;
+            $format = 'GB';
+        } else if ($num >= pow(1024, 4) && $num < pow(1024, 5)) {
+            $p = 4;
             $format = 'TB';
         }
         $num /= pow(1024, $p);
