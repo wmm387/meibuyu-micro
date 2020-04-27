@@ -16,7 +16,7 @@ use Meibuyu\Micro\Exceptions\HttpResponseException;
 class UploadManager
 {
 
-    public static $pathPrefix = 'public/upload/';
+    public static $pathPrefix = '/upload/';
     public static $options = [
         'path' => 'default', // 默认保存路径
         'maxSize' => 100000000, // 文件大小
@@ -67,6 +67,10 @@ class UploadManager
      */
     public static function uploadFile($file, $options = [])
     {
+        $documentRoot = config('server.settings.document_root');
+        if (!$documentRoot) {
+            throw new \RuntimeException('未配置静态资源');
+        }
         $options = self::parseOptions($options);
         if ($file->isValid()) {
             $extension = $file->getExtension();
@@ -80,10 +84,10 @@ class UploadManager
             }
             // 文件重命名,由当前日期时间 + 唯一ID + 扩展名
             $fileName = date('YmdHis') . uniqid() . '.' . $extension;
-            $savePath = self::parsePath($options) . $fileName;
+            $savePath = self::parsePath($options, $documentRoot) . $fileName;
             $file->moveTo($savePath);
             if ($file->isMoved()) {
-                return str_replace('public/', '', $savePath);
+                return str_replace($documentRoot, '', $savePath);
             } else {
                 throw new HttpResponseException('文件保存失败');
             }
@@ -98,6 +102,10 @@ class UploadManager
      */
     public static function createAvatar()
     {
+        $documentRoot = config('server.settings.document_root');
+        if (!$documentRoot) {
+            throw new \RuntimeException('未配置静态资源');
+        }
         $img = imagecreatetruecolor(180, 180);
         $bgColor = imagecolorallocate($img, 240, 240, 240);
         imagefill($img, 0, 0, $bgColor);
@@ -124,28 +132,29 @@ class UploadManager
             $i += 14;
         }
 
-        $path = self::$pathPrefix . 'avatar/default/';
+        $path = $documentRoot . self::$pathPrefix . 'avatar/default/';
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
         }
         $fileName = $path . date('YmdHis') . uniqid() . '.png';
         imagepng($img, $fileName);
         imagedestroy($img);//释放内存
-        return str_replace('public/', '', $fileName);
+        return str_replace($documentRoot, '', $fileName);
     }
 
     /**
      * 处理保存路径
      * @param $options
+     * @param $documentRoot
      * @return string
      */
-    public static function parsePath($options)
+    public static function parsePath($options, $documentRoot)
     {
         if (isset($options['temp']) && $options['temp'] && !isset($options['path'])) {
             // 如果是临时文件,且没有指定保存路径,修改保存路径为临时路径
             $options['path'] = 'temp';
         }
-        $path = self::$pathPrefix . $options['path'] . '/' . date('Y-m-d');
+        $path = $documentRoot . self::$pathPrefix . $options['path'] . '/' . date('Y-m-d');
         if (!is_dir($path)) {
             // 判断路径是否存在,不存在,则创建
             mkdir($path, 0777, true);
@@ -169,9 +178,12 @@ class UploadManager
 
     public static function deleteFile($path)
     {
+        $documentRoot = config('server.settings.document_root');
+        if (!$documentRoot) {
+            throw new \RuntimeException('未配置静态资源');
+        }
         $path = str_replace(config('app_domain'), '', $path);
-        $path = ltrim($path, '/');
-        $path = 'public/' . $path;
+        $path = $documentRoot . $path;
         if (file_exists($path)) {
             unlink($path);
         }
