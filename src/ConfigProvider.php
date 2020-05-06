@@ -21,6 +21,9 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'dependencies' => [
+                \Hyperf\ServiceGovernance\Listener\RegisterServiceListener::class => \Meibuyu\Micro\Listener\RegisterServiceListener::class,
+            ],
             'commands' => [
                 \Meibuyu\Micro\Command\RepositoryCommand::class,
                 \Meibuyu\Micro\Command\ValidatorCommand::class,
