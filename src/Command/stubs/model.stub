@@ -13,7 +13,7 @@ namespace App\Model;
 %namespace%
 /**
  * 模型类 %ClassName%
- * @package App\Models
+ * @package App\Model
 %properties%
  */
 class %ClassName% extends Model

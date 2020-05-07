@@ -40,7 +40,7 @@ class %ModelClass%Controller extends AbstractController
     /**
      * 获取列表数据
      * @Perm("index")
-     * @param $id id编号
+     * @param int $id id编号
      * @return mixed
      */
     public function show($id)
@@ -61,6 +61,7 @@ class %ModelClass%Controller extends AbstractController
 
     /**
      * 更新数据
+     * @param int $id id编号
      * @return mixed
      */
     public function update($id)
@@ -71,6 +72,7 @@ class %ModelClass%Controller extends AbstractController
 
     /**
      * 删除单条数据
+     * @param int $id id编号
      * @return mixed
      */
     public function delete($id)

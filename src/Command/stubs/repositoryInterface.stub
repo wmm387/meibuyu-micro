@@ -14,9 +14,8 @@ namespace App\Repository\Interfaces;
 use Meibuyu\Micro\Repository\Contracts\RepositoryInterface;
 
 /**
- *  %ClassName% 接口类.
- *
- * @package namespace App\Repository\Interfaces;
+ * Interface  %ClassName%
+ * @package App\Repository\Interfaces
  */
 interface %ClassName% extends RepositoryInterface
 {

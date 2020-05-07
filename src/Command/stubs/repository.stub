@@ -18,16 +18,15 @@ use Meibuyu\Micro\Exceptions\HttpResponseException;
 use Meibuyu\Micro\Repository\Eloquent\BaseRepository;
 
 /**
- * %ModelClass%RepositoryEloquent 类.
- *
- * @package namespace App\Repository\Eloquent;
+ * Class %ModelClass%RepositoryEloquent
+ * @package App\Repository\Eloquent;
  */
 class %ModelClass%RepositoryEloquent extends BaseRepository implements %ModelClass%Repository
 {
 
     /**
      * %ModelClass% 模型
-     * @return %ModelClass%
+     * @return %ModelClass%|string
      */
     public function model(): %ModelClass%
     {
@@ -36,7 +35,7 @@ class %ModelClass%RepositoryEloquent extends BaseRepository implements %ModelCla
 
     /**
      * 数据校验器
-     * @return %ModelClass%Validator
+     * @return %ModelClass%Validator|string
      */
     public function validator(): %ModelClass%Validator
     {
@@ -49,8 +48,8 @@ class %ModelClass%RepositoryEloquent extends BaseRepository implements %ModelCla
      */
     public function list(): array
     {
-        $pageSize = (int)$this->request->input('page_size', env("DEFAULT_PAGE_SIZE",10));
-        %list%;
+        $pageSize = (int)$this->request->input('page_size', DEFAULT_PAGE_SIZE);
+        %list%
     }
 
     /**
@@ -60,7 +59,7 @@ class %ModelClass%RepositoryEloquent extends BaseRepository implements %ModelCla
      */
     public function show($id): array
     {
-        %show%;
+        %show%
     }
 
     /**

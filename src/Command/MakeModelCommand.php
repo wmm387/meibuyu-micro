@@ -454,8 +454,7 @@ class MakeModelCommand extends HyperfCommand
     /**
      * 创建验证文件
      */
-    private
-    function makeValidator()
+    private function makeValidator()
     {
         $stubFile = $this->path . 'validator.stub';
         $folder = $this->appPath . '/Validators';
@@ -570,8 +569,7 @@ class MakeModelCommand extends HyperfCommand
         $this->writeToFile($file, $content);
     }
 
-    private
-    function makeRepositoryInterface()
+    private function makeRepositoryInterface()
     {
         $stubFile = $this->path . 'repositoryInterface.stub';
         $folder = $this->appPath . '/Repository/Interfaces';
@@ -600,7 +598,7 @@ class MakeModelCommand extends HyperfCommand
         $content = file_get_contents($stubFile);
         $info = $this->currentTableStructure;
         //列表
-        $list = "\$conditions = \$this->request->input();\n";
+        $list = "\$conditions = \$this->request->inputs();\n";
         $list .= "\t\t\$list = \$this->model->where(function (\$q) use (\$conditions) {\n";
         foreach ($info['fields'] as $v) {
             if (Str::endsWith($v['column_name'], "_id")) {
@@ -669,7 +667,7 @@ class MakeModelCommand extends HyperfCommand
                     foreach ($info['relations']['hasMany'] as $v) {
                         $rs .= "\n\tpublic function {$v['function']}(\$id): array\n";
                         $rs .= "\t{\n";
-                        $rs .= "\t\t\$pageSize = (int)\$this->request->input('page_size', env(\"DEFAULT_PAGE_SIZE\",10));\n";
+                        $rs .= "\t\t\$pageSize = (int)\$this->request->input('page_size', DEFAULT_PAGE_SIZE);\n";
                         $rs .= "\t\treturn \$this->find(\$id)->{$v['function']}()->orderByDesc('id')->paginate(\$pageSize)->toArray();\n";
                         $rs .= "\t}\n";
                     }
@@ -1017,14 +1015,12 @@ class MakeModelCommand extends HyperfCommand
     /**生成迁移文件的日期格式
      * @return string
      */
-    private
-    function getDatePrefix(): string
+    private function getDatePrefix(): string
     {
         return date('Y_m_dHis');
     }
 
-    public
-    function configure()
+    public function configure()
     {
         //$this->call()
         parent::configure();
@@ -1042,8 +1038,7 @@ class MakeModelCommand extends HyperfCommand
      * 配置文件内容
      * @return array
      */
-    protected
-    function getArguments()
+    protected function getArguments()
     {
         return [
             ['name', InputArgument::OPTIONAL, '数据库表名'],
