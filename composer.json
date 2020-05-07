@@ -28,7 +28,8 @@
       "Meibuyu\\Micro\\": "src/"
     },
     "files": [
-      "src/functions.php"
+      "src/functions.php",
+      "src/const.php"
     ]
   },
   "extra": {
