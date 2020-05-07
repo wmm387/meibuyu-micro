@@ -601,7 +601,7 @@ class MakeModelCommand extends HyperfCommand
         $content = file_get_contents($stubFile);
         $info = $this->currentTableStructure;
         //列表
-        $list = "\$conditions = \$this->request->inputs();\n";
+        $list = "\$conditions = \$this->request->all();\n";
         $list .= "\t\t\$list = \$this->model->where(function (\$q) use (\$conditions) {\n";
         foreach ($info['fields'] as $v) {
             if (Str::endsWith($v['column_name'], "_id")) {
