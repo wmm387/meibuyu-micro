@@ -1,0 +1,24 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: %user%
+ * Date: %date%
+ * Time: %time%
+ * Description:
+ */
+
+declare(strict_types=1);
+
+namespace App\Repository\Interfaces;
+
+use Meibuyu\Micro\Repository\Contracts\RepositoryInterface;
+
+/**
+ *  %ClassName% 接口类.
+ *
+ * @package namespace App\Repository\Interfaces;
+ */
+interface %ClassName% extends RepositoryInterface
+{
+
+}

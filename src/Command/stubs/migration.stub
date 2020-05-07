@@ -1,0 +1,37 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: %user%
+ * Date: %date%
+ * Time: %time%
+ * Description:
+ */
+
+use Hyperf\Database\Schema\Schema;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Database\Migrations\Migration;
+use Hyperf\DbConnection\Db;
+
+class %ClassName% extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::disableForeignKeyConstraints();
+        Schema::create('%tablename%', function (Blueprint $table) {
+%attributes%
+        });
+        %tableComment%
+        Schema::enableForeignKeyConstraints();
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('%tablename%');
+    }
+}

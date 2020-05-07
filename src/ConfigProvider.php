@@ -27,6 +27,7 @@ class ConfigProvider
             'commands' => [
                 \Meibuyu\Micro\Command\RepositoryCommand::class,
                 \Meibuyu\Micro\Command\ValidatorCommand::class,
+                \Meibuyu\Micro\Command\MakeModelCommand::class,
             ],
             'annotations' => [
                 'scan' => [

@@ -1,0 +1,45 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: %user%
+ * Date: %date%
+ * Time: %time%
+ * Description:
+ */
+
+declare (strict_types=1);
+
+namespace App\Model;
+%namespace%
+/**
+ * 模型类 %ClassName%
+ * @package App\Models
+%properties%
+ */
+class %ClassName% extends Model
+{
+     %SoftDelete%
+     /**
+     * 可写入数据的字段.
+     * @var array
+     */
+    protected $fillable = [
+%fillAble%
+    ];
+
+    /**
+     * 字段转换数据类型的字段
+     * @var array
+     */
+    protected $casts = [
+%casts%
+    ];
+
+    /**
+     * 是否使用时间戳管理
+     * @var bool
+     */
+    public $timestamps = %timestamps%;
+
+%relations%
+}
