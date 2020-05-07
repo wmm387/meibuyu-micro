@@ -26,18 +26,18 @@ class %ModelClass%RepositoryEloquent extends BaseRepository implements %ModelCla
 
     /**
      * %ModelClass% 模型
-     * @return %ModelClass%|string
+     * @return mixed
      */
-    public function model(): %ModelClass%
+    public function model()
     {
         return %ModelClass%::class;
     }
 
     /**
      * 数据校验器
-     * @return %ModelClass%Validator|string
+     * @return mixed
      */
-    public function validator(): %ModelClass%Validator
+    public function validator()
     {
         return %ModelClass%Validator::class;
     }

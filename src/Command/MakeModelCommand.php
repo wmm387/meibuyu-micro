@@ -485,7 +485,7 @@ class MakeModelCommand extends HyperfCommand
             }
             $rs = [];
             $required = "nullable";
-            if ($null == 'YES') {
+            if ($null !== 'YES') {
                 if (!$default) {
                     $required = "required";
                     $messages[] = "\t\t'{$name}.{$required}' => '{$msgName}不能为空！'";
@@ -518,8 +518,8 @@ class MakeModelCommand extends HyperfCommand
                 case "text":
                     $rs[] = 'string';
                     if ($length) {
-                        $rs[] = 'size:' . $length;
-                        $messages[] = "\t\t'{$name}.size' => '{$msgName}字符长度不能超过{$length}！'";
+                        $rs[] = 'max:' . $length;
+                        $messages[] = "\t\t'{$name}.max' => '{$msgName}字符长度不能超过{$length}！'";
                     }
                     break;
                 case "date":
