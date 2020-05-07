@@ -565,8 +565,8 @@ class MakeModelCommand extends HyperfCommand
         $messages = join(",\n", $messages);
         $patterns = ["%ModelClass%", '%createRules%', '%updateRules%', '%attributes%', '%messages%'];
         $createRules = $rules;
-        $updateRules = str_replace("nullable", "sometimes", $rules);
-        $updateRules = str_replace("required", "sometimes", $updateRules);
+        $updateRules = str_replace("nullable", "sometimes|nullable", $rules);
+        $updateRules = str_replace("required", "sometimes|required", $updateRules);
         $replacements = [$modelClass, $createRules, $updateRules, $attributes, $messages];
         $content = $this->buildField($patterns, $replacements, $content);
         $this->writeToFile($file, $content);
