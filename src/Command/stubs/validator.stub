@@ -18,10 +18,10 @@ class %ModelClass%Validator extends HyperfValidator
 {
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
-%rules%
+%createRules%
         ],
         ValidatorInterface::RULE_UPDATE => [
-%rules%
+%updateRules%
         ],
     ];
 

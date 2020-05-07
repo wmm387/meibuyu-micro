@@ -121,7 +121,7 @@ class MakeModelCommand extends HyperfCommand
             if (!Str::contains($v, "_to_") && ($this->input->getOption('model') || $this->input->getOption('all'))) {
                 $this->makeModel();
             }
-            if (!Str::contains($v, "_to_") && $this->input->getOption('controller') || $this->input->getOption('all')) {
+            if (!Str::contains($v, "_to_") && ($this->input->getOption('controller') || $this->input->getOption('all'))) {
                 $this->makeValidator();
                 $this->makeRepositoryInterface();
                 $this->makeRepository();
@@ -563,8 +563,11 @@ class MakeModelCommand extends HyperfCommand
             $rules .= "\t\t\t'" . $name . "' => '" . implode("|", $rs) . "'," . ($comment ? "// " . $comment . "-" . $type : "//" . $type) . "\n";
         }
         $messages = join(",\n", $messages);
-        $patterns = ["%ModelClass%", '%rules%', '%attributes%', '%messages%'];
-        $replacements = [$modelClass, $rules, $attributes, $messages];
+        $patterns = ["%ModelClass%", '%createRules%', '%updateRules%', '%attributes%', '%messages%'];
+        $createRules = $rules;
+        $updateRules = str_replace("nullable", "sometimes", $rules);
+        $updateRules = str_replace("required", "sometimes", $updateRules);
+        $replacements = [$modelClass, $createRules, $updateRules, $attributes, $messages];
         $content = $this->buildField($patterns, $replacements, $content);
         $this->writeToFile($file, $content);
     }
