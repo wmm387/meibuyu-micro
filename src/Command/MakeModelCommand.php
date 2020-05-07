@@ -786,7 +786,7 @@ class MakeModelCommand extends HyperfCommand
             if ($routes) {
                 foreach ($routes as $v) {
                     $r = Str::snake($v);
-                    $content .= "\n\t\tRouter::get('/$r', 'App\Controller\\" . $modelClass . "Controller@$v');";
+                    $content .= "\n\t\tRouter::get('/$r/\{id\}', 'App\Controller\\" . $modelClass . "Controller@$v');";
                 }
             }
             $content .= "\n\t});";
