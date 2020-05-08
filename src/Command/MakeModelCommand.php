@@ -668,7 +668,8 @@ class MakeModelCommand extends HyperfCommand
                 }
                 if (isset($info['relations']['hasMany'])) {
                     foreach ($info['relations']['hasMany'] as $v) {
-                        $rs .= "\n\tpublic function {$v['function']}(\$id): array\n";
+                        $f = Str::camel($v['function']);
+                        $rs .= "\n\tpublic function {$f}(\$id): array\n";
                         $rs .= "\t{\n";
                         $rs .= "\t\t\$pageSize = (int)\$this->request->input('page_size', DEFAULT_PAGE_SIZE);\n";
                         $rs .= "\t\treturn \$this->find(\$id)->{$v['function']}()->orderByDesc('id')->paginate(\$pageSize)->toArray();\n";
@@ -737,15 +738,16 @@ class MakeModelCommand extends HyperfCommand
             if (isset($info['relations']) && $info['relations']) {
                 if (isset($info['relations']['hasMany'])) {
                     foreach ($info['relations']['hasMany'] as $v) {
+                        $f = Str::camel($v['function']);
                         $rs .= "\n\t/**";
                         $rs .= "\n\t * 获取{$v['relation_model_name']}关联列表数据";
                         $rs .= "\n\t * @Perm(\"index\")";
                         $rs .= "\n\t * @param; \$id id编号";
                         $rs .= "\n\t * @return mixed";
                         $rs .= "\n\t */";
-                        $rs .= "\n\tpublic function {$v['function']}(\$id)\n";
+                        $rs .= "\n\tpublic function {$f}(\$id)\n";
                         $rs .= "\t{\n";
-                        $rs .= "\t\t\$data = \$this->repository->show(\$id);\n";
+                        $rs .= "\t\t\$data = \$this->repository->{$f}(\$id);\n";
                         $rs .= "\t\treturn success('获取成功', \$data);\n";
                         $rs .= "\t}\n";
                         $routes[] = $v['function'];
