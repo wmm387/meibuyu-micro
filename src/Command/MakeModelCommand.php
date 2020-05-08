@@ -192,7 +192,7 @@ class MakeModelCommand extends HyperfCommand
                         $relation['local_table_key'] = $fv['column_name'];
                     }
                     $relation['relation_table'] = $fv['table_name'];
-                    $relation['function'] = Str::camel($relation['constraint_table']);
+                    $relation['function'] = Str::snake($relation['constraint_table']);
                     $relation['relation_model_name'] = Str::studly(Str::singular($relation['constraint_table']));
                     $tables[$relation['local_table']]['relations']['belongsToMany'][] = $relation;
                 } else {
@@ -201,7 +201,7 @@ class MakeModelCommand extends HyperfCommand
                     if (!isset($tables[$relation['relation_table']])) {
                         continue;
                     }
-                    $relation['function'] = Str::camel(Str::singular($relation['relation_table']));
+                    $relation['function'] = Str::snake(Str::singular($relation['relation_table']));
                     $relation['relation_model_name'] = Str::studly(Str::singular($relation['relation_table']));
                     $relation['relation_table_key'] = "id";
                     $relation['local_table'] = $fv['table_name'];
@@ -212,7 +212,7 @@ class MakeModelCommand extends HyperfCommand
                     $reverseRelation['relation_table_key'] = $relation['local_table_key'];
                     $reverseRelation['local_table'] = $relation['relation_table'];
                     $reverseRelation['local_table_key'] = $relation['relation_table_key'];
-                    $reverseRelation['function'] = Str::camel($reverseRelation['relation_table']);
+                    $reverseRelation['function'] = Str::snake($reverseRelation['relation_table']);
                     $reverseRelation['relation_model_name'] = Str::studly(Str::singular($reverseRelation['relation_table']));
                     $tables[$reverseRelation['local_table']]['relations']['hasMany'][] = $reverseRelation;
                 }
@@ -786,7 +786,6 @@ class MakeModelCommand extends HyperfCommand
             $content .= "\n\t\tRouter::delete('/{id}', 'App\Controller\\" . $modelClass . "Controller@delete');";
             if ($routes) {
                 foreach ($routes as $v) {
-                    $r = Str::snake($v);
                     $content .= "\n\t\tRouter::get('/$r/\{id\}', 'App\Controller\\" . $modelClass . "Controller@$v');";
                 }
             }
