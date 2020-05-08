@@ -310,25 +310,33 @@ if (!function_exists('get_tree_id')) {
     }
 }
 
-if (!function_exists('get_tree')) {
+if (!function_exists('list_go_tree')) {
     /**
-     * 树状的算法
-     * @param array $array 代转化数组
-     * @param int $pid 起始节点
+     * 列表转树状格式
+     * @param array $list
+     * @param string $pk
+     * @param string $pid
+     * @param string $children
      * @return array
      */
-    function get_tree($array = [], $pid = 0)
+    function list_go_tree(array $list = [], $pk = 'id', $pid = 'parent_id', $children = 'children')
     {
-        $list = [];
-        // 获取每个节点的直属子节点，*记住是直属，不是所有子节点
-        foreach ($array as $item) {
-            if (isset($list[$item['pid']])) {
-                $list[$item['pid']][] = $item;
+        $tree = $refer = [];
+        // 创建基于主键的数组引用
+        foreach ($list as $key => $data) {
+            $refer[$data[$pk]] = &$list[$key];
+        }
+        foreach ($list as $key => $data) {
+            $parentId = $data[$pid];
+            // 判断是否存在parent
+            if (isset($refer[$parentId])) {
+                $parent = &$refer[$parentId];
+                $parent[$children][] = &$list[$key];
             } else {
-                $list[$item['pid']] = [$item];
+                $tree[] = &$list[$key];
             }
         }
-        return format_tree($list);
+        return $tree;
     }
 }
 
