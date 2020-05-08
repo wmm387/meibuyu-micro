@@ -955,7 +955,7 @@ class MakeModelCommand extends HyperfCommand
                     if ($null == 'YES') {
                         $t .= "->nullable()";
                     }
-                    if ($default) {
+                    if ($default || $default === '0') {
                         $t .= "->default('$default')";
                     }
                     if ($collation) {
