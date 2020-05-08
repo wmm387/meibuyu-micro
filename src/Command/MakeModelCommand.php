@@ -337,8 +337,8 @@ class MakeModelCommand extends HyperfCommand
                 'array' => 'array',
                 'json' => 'string',
             ];
-            $properties .= " * @property " . (isset($pc[$v['data_type']]) ? $pc[$v['data_type']] : "string") . " $" . $name . "\n";
-            if ($name == 'created_at' || $name == 'created_at') {
+            $properties .= " * @property " . (isset($pc[$v['data_type']]) ? $pc[$v['data_type']] : "string") . " $" . $name . ($v['column_comment'] ? " " . $v['column_comment'] : "") . "\n";
+            if ($name == 'created_at' || $name == 'updated_at') {
                 $timestamps++;
             }
             if ($name == 'deleted_at') {
@@ -347,7 +347,7 @@ class MakeModelCommand extends HyperfCommand
             if (in_array($name, $filterFields)) {
                 continue;
             }
-            $fillAble .= "\t\t'" . $name . "'," . ($v['column_comment'] ? "// " . $v['column_comment'] : "") . "\n";
+            $fillAble .= "\t\t'" . $name . "'," . "\n";
             if (isset($this->cc[$v['data_type']]) && $this->cc[$v['data_type']] != 'string') {
                 $casts .= "\t\t'" . $name . "'=>'" . $this->cc[$v['data_type']] . "',\n";
             }
