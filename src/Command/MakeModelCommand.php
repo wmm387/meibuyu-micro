@@ -952,8 +952,8 @@ class MakeModelCommand extends HyperfCommand
                         break;
                 }
                 if ($t) {
-                    if ($null == 'NO') {
-                        $t .= "->nullable(false)";
+                    if ($null == 'YES') {
+                        $t .= "->nullable()";
                     }
                     if ($default) {
                         $t .= "->default('$default')";
