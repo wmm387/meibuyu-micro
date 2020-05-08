@@ -122,10 +122,12 @@ class MakeModelCommand extends HyperfCommand
                 $this->makeModel();
             }
             if (!Str::contains($v, "_to_") && ($this->input->getOption('controller') || $this->input->getOption('all'))) {
-                $this->makeValidator();
                 $this->makeRepositoryInterface();
                 $this->makeRepository();
                 $this->makeController();
+            }
+            if (!Str::contains($v, "_to_") && ($this->input->getOption('validator') || $this->input->getOption('all'))) {
+                $this->makeValidator();
             }
             if ($this->input->getOption('migrate') || $this->input->getOption('all')) {
                 $this->makeMigrate();
@@ -451,127 +453,6 @@ class MakeModelCommand extends HyperfCommand
         return true;
     }
 
-    /**
-     * 创建验证文件
-     */
-    private function makeValidator()
-    {
-        $stubFile = $this->path . 'validator.stub';
-        $folder = $this->appPath . '/Validators';
-        $this->makeFolder($folder);
-        $table = $this->table;
-        $modelClass = Str::studly(Str::singular($table));
-        $className = $modelClass . "Validator";
-        $file = $folder . "/" . $className . ".php";
-        $content = file_get_contents($stubFile);
-        $info = $this->currentTableStructure;
-        $filterFields = ["id", "created_at", "updated_at", "deleted_at"];
-        $rules = '';
-        $attributes = '';
-        $messages = [];
-        $list = $info['fields'];
-        foreach ($list as $v) {
-            $name = $v['column_name'];
-            $default = $v['column_default'];
-            $type = $v['data_type'];
-            $key = $v['column_key'];
-            $null = $v['is_nullable'];
-//            $extra = $v['extra'];
-            $comment = $v['column_comment'];
-            $length = $v['length'];
-            $msgName = ($comment ? $comment : $name);
-            if (in_array($name, $filterFields)) {
-                continue;
-            }
-            $rs = [];
-            $required = "nullable";
-            if ($null !== 'YES') {
-                if (!$default) {
-                    $required = "required";
-                    $messages[] = "\t\t'{$name}.{$required}' => '{$msgName}不能为空！'";
-                }
-            }
-            $rs[] = $required;
-            switch ($type) {
-                case "bigint":
-                case "smallint":
-                case "tinyint":
-                case "mediumint":
-                case "int":
-                case "integer":
-                    $rs[] = 'integer';
-                    $messages[] = "\t\t'{$name}.integer' => '{$msgName}只能是整数！'";
-                    break;
-                case "decimal":
-                case "double":
-                case "float":
-                case "numeric":
-                case "real":
-                    $rs[] = 'numeric';
-                    $messages[] = "\t\t'{$name}.numeric' => '{$msgName}只能是数字支持小数！'";
-                    break;
-                case "char":
-                case "varchar":
-                case "tinytext":
-                case "mediumtext":
-                case "longtext":
-                case "text":
-                    $rs[] = 'string';
-                    if ($length) {
-                        $rs[] = 'max:' . $length;
-                        $messages[] = "\t\t'{$name}.max' => '{$msgName}字符长度不能超过{$length}！'";
-                    }
-                    break;
-                case "date":
-                case "datetime":
-                case "time":
-                case "timestamp":
-                case "year":
-                    $rs[] = 'date';
-                    $messages[] = "\t\t'{$name}.date' => '{$msgName}不符合日期时间格式！'";
-                    break;
-                case "enum":
-                case "set":
-                    $rs[] = 'in:[' . $length . "]";
-                    $messages[] = "\t\t'{$name}.in' => '{$msgName}的值只能在[{$length}]列表中！'";
-                    break;
-                default:
-                    if (Str::contains($name, "email") || Str::contains($name, "e-mail") || Str::contains($name, "e_mail")) {
-                        $rs[] = 'email';
-                        $messages[] = "\t\t'{$name}.email' => '{$msgName}只支持邮箱格式！'";
-                    } elseif ($name == 'url'
-                        || Str::contains($name, "_url")
-                        || Str::contains($name, "url_")) {
-                        $rs[] = 'url';
-                        $messages[] = "\t\t'{$name}.email' => '{$msgName}只支持url格式！'";
-                    } elseif ($name == 'date'
-                        || Str::contains($name, "_date")
-                        || Str::contains($name, "date_")) {
-                        $rs[] = 'date';
-                        $messages[] = "\t\t'{$name}.email' => '{$msgName}不符合日期时间格式！'";
-                    }
-                    break;
-            }
-
-            if ($key == 'uni') {
-                $rs[] = "unique:$table," . $name;
-                $messages[] = "\t\t'{$name}.unique' => '{$msgName}的值在数据库中已经存在！'";
-            }
-            if ($comment) {
-                $attributes .= "\t\t'" . $name . "' => '" . $comment . "'," . "\n";
-            }
-            $rules .= "\t\t\t'" . $name . "' => '" . implode("|", $rs) . "'," . ($comment ? "// " . $comment . "-" . $type : "//" . $type) . "\n";
-        }
-        $messages = join(",\n", $messages);
-        $patterns = ["%ModelClass%", '%createRules%', '%updateRules%', '%attributes%', '%messages%'];
-        $createRules = $rules;
-        $updateRules = str_replace("nullable", "sometimes|nullable", $rules);
-        $updateRules = str_replace("required", "sometimes|required", $updateRules);
-        $replacements = [$modelClass, $createRules, $updateRules, $attributes, $messages];
-        $content = $this->buildField($patterns, $replacements, $content);
-        $this->writeToFile($file, $content);
-    }
-
     private function makeRepositoryInterface()
     {
         $stubFile = $this->path . 'repositoryInterface.stub';
@@ -794,6 +675,127 @@ class MakeModelCommand extends HyperfCommand
             $content .= "\n\t});";
             $this->writeToFile($file, $content);
         }
+    }
+
+    /**
+     * 创建验证文件
+     */
+    private function makeValidator()
+    {
+        $stubFile = $this->path . 'validator.stub';
+        $folder = $this->appPath . '/Validators';
+        $this->makeFolder($folder);
+        $table = $this->table;
+        $modelClass = Str::studly(Str::singular($table));
+        $className = $modelClass . "Validator";
+        $file = $folder . "/" . $className . ".php";
+        $content = file_get_contents($stubFile);
+        $info = $this->currentTableStructure;
+        $filterFields = ["id", "created_at", "updated_at", "deleted_at"];
+        $rules = '';
+        $attributes = '';
+        $messages = [];
+        $list = $info['fields'];
+        foreach ($list as $v) {
+            $name = $v['column_name'];
+            $default = $v['column_default'];
+            $type = $v['data_type'];
+            $key = $v['column_key'];
+            $null = $v['is_nullable'];
+//            $extra = $v['extra'];
+            $comment = $v['column_comment'];
+            $length = $v['length'];
+            $msgName = ($comment ? $comment : $name);
+            if (in_array($name, $filterFields)) {
+                continue;
+            }
+            $rs = [];
+            $required = "nullable";
+            if ($null !== 'YES') {
+                if (!$default) {
+                    $required = "required";
+                    $messages[] = "\t\t'{$name}.{$required}' => '{$msgName}不能为空！'";
+                }
+            }
+            $rs[] = $required;
+            switch ($type) {
+                case "bigint":
+                case "smallint":
+                case "tinyint":
+                case "mediumint":
+                case "int":
+                case "integer":
+                    $rs[] = 'integer';
+                    $messages[] = "\t\t'{$name}.integer' => '{$msgName}只能是整数！'";
+                    break;
+                case "decimal":
+                case "double":
+                case "float":
+                case "numeric":
+                case "real":
+                    $rs[] = 'numeric';
+                    $messages[] = "\t\t'{$name}.numeric' => '{$msgName}只能是数字支持小数！'";
+                    break;
+                case "char":
+                case "varchar":
+                case "tinytext":
+                case "mediumtext":
+                case "longtext":
+                case "text":
+                    $rs[] = 'string';
+                    if ($length) {
+                        $rs[] = 'max:' . $length;
+                        $messages[] = "\t\t'{$name}.max' => '{$msgName}字符长度不能超过{$length}！'";
+                    }
+                    break;
+                case "date":
+                case "datetime":
+                case "time":
+                case "timestamp":
+                case "year":
+                    $rs[] = 'date';
+                    $messages[] = "\t\t'{$name}.date' => '{$msgName}不符合日期时间格式！'";
+                    break;
+                case "enum":
+                case "set":
+                    $rs[] = 'in:[' . $length . "]";
+                    $messages[] = "\t\t'{$name}.in' => '{$msgName}的值只能在[{$length}]列表中！'";
+                    break;
+                default:
+                    if (Str::contains($name, "email") || Str::contains($name, "e-mail") || Str::contains($name, "e_mail")) {
+                        $rs[] = 'email';
+                        $messages[] = "\t\t'{$name}.email' => '{$msgName}只支持邮箱格式！'";
+                    } elseif ($name == 'url'
+                        || Str::contains($name, "_url")
+                        || Str::contains($name, "url_")) {
+                        $rs[] = 'url';
+                        $messages[] = "\t\t'{$name}.email' => '{$msgName}只支持url格式！'";
+                    } elseif ($name == 'date'
+                        || Str::contains($name, "_date")
+                        || Str::contains($name, "date_")) {
+                        $rs[] = 'date';
+                        $messages[] = "\t\t'{$name}.email' => '{$msgName}不符合日期时间格式！'";
+                    }
+                    break;
+            }
+
+            if ($key == 'uni') {
+                $rs[] = "unique:$table," . $name;
+                $messages[] = "\t\t'{$name}.unique' => '{$msgName}的值在数据库中已经存在！'";
+            }
+            if ($comment) {
+                $attributes .= "\t\t'" . $name . "' => '" . $comment . "'," . "\n";
+            }
+            $rules .= "\t\t\t'" . $name . "' => '" . implode("|", $rs) . "'," . ($comment ? "// " . $comment . "-" . $type : "//" . $type) . "\n";
+        }
+        $messages = join(",\n", $messages);
+        $patterns = ["%ModelClass%", '%createRules%', '%updateRules%', '%attributes%', '%messages%'];
+        $createRules = $rules;
+        $updateRules = str_replace("nullable", "sometimes|nullable", $rules);
+        $updateRules = str_replace("required", "sometimes|required", $updateRules);
+        $replacements = [$modelClass, $createRules, $updateRules, $attributes, $messages];
+        $content = $this->buildField($patterns, $replacements, $content);
+        $this->writeToFile($file, $content);
     }
 
     private function makeMigrate()
@@ -1032,6 +1034,7 @@ class MakeModelCommand extends HyperfCommand
         $this->addOption('model', 'm', InputOption::VALUE_NONE, '生成model文件');
         $this->addOption('controller', 'c', InputOption::VALUE_NONE, '生成controller文件');
         $this->addOption('migrate', 'i', InputOption::VALUE_NONE, '生成迁移文件');
+        $this->addOption('validator', 'l', InputOption::VALUE_NONE, '生成验证文件');
         $this->addOption('author', 'r', InputOption::VALUE_OPTIONAL, '生成文件的作者');
         $this->addOption('force', 'f', InputOption::VALUE_NONE, '文件存在是否覆盖');
         $this->addOption('database', 'd', InputOption::VALUE_NONE, '全数据库索引自动生成全站文件');
