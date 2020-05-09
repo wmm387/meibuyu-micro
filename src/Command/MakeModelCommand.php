@@ -356,7 +356,11 @@ class MakeModelCommand extends HyperfCommand
             }
             $fillAble .= "\t\t'" . $name . "'," . "\n";
             if (isset($this->cc[$v['data_type']]) && $this->cc[$v['data_type']] != 'string') {
-                $casts .= "\t\t'" . $name . "'=>'" . $this->cc[$v['data_type']] . "',\n";
+                if ($this->cc[$v['data_type']] == 'timestamp') {
+                    $casts .= "\t\t'" . $name . "'=>'datetime',\n";
+                } else {
+                    $casts .= "\t\t'" . $name . "'=>'" . $this->cc[$v['data_type']] . "',\n";
+                }
             }
         }
         $relation = '';
@@ -364,10 +368,8 @@ class MakeModelCommand extends HyperfCommand
             $relation .= "\n";
             if (isset($info['relations']['belongsTo'])) {
                 foreach ($info['relations']['belongsTo'] as $v) {
-                    $relation .= "\n\t/**\n\t* 属于" . $v['relation_model_name'] . "的关联";
-                    $relation .= "\n\t* @return " . $v['relation_model_name'];
-                    $relation .= "\n\t**/";
-                    $relation .= "\n\tpublic function " . $v['function'] . "() : " . $v['relation_model_name'];
+                    $relation .= "\n\t/**\n\t* 属于" . $v['relation_model_name'] . "的关联\n\t*/";
+                    $relation .= "\n\tpublic function " . $v['function'] . "()";
                     $relation .= "\n\t{";
                     $relation .= "\n\t\t" . 'return $this->belongsTo(' . $v['relation_model_name'] . "::class,'" . $v['local_table_key'] . "','{$v['relation_table_key']}' );";
                     $relation .= "\n\t}";
