@@ -344,9 +344,11 @@ class MakeModelCommand extends HyperfCommand
             ];
             $properties .= " * @property " . (isset($pc[$v['data_type']]) ? $pc[$v['data_type']] : "string") . " $" . $name . ($v['column_comment'] ? " " . $v['column_comment'] : "") . "\n";
             if ($name == 'created_at' || $name == 'updated_at') {
+                $casts .= "\t\t'" . $name . "'=>'datetime',\n";
                 $timestamps++;
             }
             if ($name == 'deleted_at') {
+                $casts .= "\t\t'" . $name . "'=>'datetime',\n";
                 $softDelete = true;
             }
             if (in_array($name, $filterFields)) {
@@ -926,7 +928,11 @@ class MakeModelCommand extends HyperfCommand
                     $fields[] = "\t\t\t\t'{$name}' => \$faker->time('H:i:s'),";
                     break;
                 case "timestamp":
-                    $fields[] = "\t\t\t\t'{$name}' => \$faker->unixTime(),";
+                    if ($name == 'created_at' || $name == 'updated_at' || $name == 'deleted_at') {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->date('Y-m-d').' '.\$faker->time('H:i:s'),";
+                    } else {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->unixTime(),";
+                    }
                     break;
                 case "year":
                     $fields[] = "\t\t\t\t'{$name}' => \$faker->year(),";
