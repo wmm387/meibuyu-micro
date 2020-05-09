@@ -129,6 +129,9 @@ class MakeModelCommand extends HyperfCommand
             if (!Str::contains($v, "_to_") && ($this->input->getOption('validator') || $this->input->getOption('all'))) {
                 $this->makeValidator();
             }
+            if (!Str::contains($v, "_to_") && $this->input->getOption('seeder')) {
+                $this->makeSeeder();
+            }
             if ($this->input->getOption('migrate') || $this->input->getOption('all')) {
                 $this->makeMigrate();
             }
@@ -798,6 +801,174 @@ class MakeModelCommand extends HyperfCommand
         $this->writeToFile($file, $content);
     }
 
+    private function makeSeeder()
+    {
+        $stubFile = $this->path . 'seeder.stub';
+        $folder = BASE_PATH . '/seeders/seeders/';
+        $this->makeFolder($folder);
+        $table = $this->table;
+        $modelClass = Str::studly(Str::singular($table));
+        $className = Str::studly($table) . "TableSeeder";
+        $file = $folder . "/" . $table . "_table_seeder.php";
+        $content = file_get_contents($stubFile);
+        $info = $this->currentTableStructure;
+        $filterFields = ["id"];
+        $fields = [];
+        $otherModel = [];
+        $generateCount = $this->input->getOption("seeder");
+        $generateCount = $generateCount ? $generateCount : 30;
+        $otherProcess = "";
+        $list = $info['fields'];
+        $maxNumber = 4;
+        foreach ($list as $v) {
+            $name = $v['column_name'];
+            $type = $v['data_type'];
+            $nullAble = ($v['is_nullable'] !== 'YES');
+            $length = explode(" ", $v['length']);
+            if (in_array($name, $filterFields)) {
+                continue;
+            }
+
+            switch ($type) {
+                case "bigint":
+                case "smallint":
+                case "tinyint":
+                case "mediumint":
+                case "int":
+                case "integer":
+                    if ($name == "sex") {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->randomElement([0,1]),";
+                    } else if (Str::contains($name, "status")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->randomDigit,";
+                    } else if (Str::endsWith($name, "_id")) {
+                        $o = str_replace("_id", "", $name);
+                        $os = Str::plural($o);
+                        if (in_array($os, $this->tables)) {
+                            $o = Str::studly($o);
+                            $otherModel[] = "\nuse App\Model\\" . $o . ";";
+                            $fields[] = "\t\t\t\t'{$name}' => $o::orderBy(Db::raw('rand()'))->first()->id,";
+                        } else {
+                            $n = ((isset($length[0]) && $length[0] && $length[0] < $maxNumber) ? $length[0] : $maxNumber);
+                            $n = rand(1, $n);
+                            $fields[] = "\t\t\t\t'{$name}' => \$faker->randomNumber($n),";
+                        }
+                    } else {
+                        $n = ((isset($length[0]) && $length[0] < $maxNumber) ? $length[0] : $maxNumber);
+                        $n = rand(1, $n);
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->randomNumber($n),";
+                    }
+                    break;
+                case "decimal":
+                case "double":
+                case "float":
+                case "numeric":
+                case "real":
+                    $n = ((isset($length[0]) && $length[0] && $length[0] < $maxNumber) ? $length[0] : $maxNumber);
+                    $n = rand(1, $n);
+                    $n2 = ((isset($length[1]) && $length[1] < $maxNumber) ? $length[1] : 2);
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->randomFloat($n,$n2),";
+                    break;
+                case "char":
+                case "varchar":
+                    $n = ((isset($length[0]) && $length[0]) ? $length[0] : 255);
+                    if ($name == "ip" || $name == "ip" || $name == "ip_address" || $name == "ip_addr") {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->ipv4,";
+                    } else if (Str::contains($name, "email")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->email,";
+                    } else if ($name == "userName" || $name == "user_name" || $name == "uname") {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->userName,";
+                    } else if ($name == "url" || $name == "domain" || Str::endsWith($name, "_url") || Str::startsWith($name, "url_")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->url,";
+                    } else if ($name == "company" || $name == "company_name") {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->company,";
+                    } else if ($name == "gender") {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->title(),";
+                    } else if ($name == "name") {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->name(),";
+                    } else if (Str::contains($name, "city")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->city,";
+                    } else if (Str::contains($name, "street") || Str::contains($name, "address")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->streetAddress,";
+                    } else if (Str::contains($name, "postcode")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->postcode,";
+                    } else if (Str::contains($name, "country")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->country,";
+                    } else if (Str::contains($name, "phoneNumber") || $name == "tel" || $name == "mobile" || Str::contains($name, "phone")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->phoneNumber,";
+                    } else if (Str::contains($name, "color")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->colorName,";
+                    } else if (Str::contains($name, "image") || Str::contains($name, "path")) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->imageUrl(640, 480),";
+                    } else if ($name == "ean" || $name == "bar_code") {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->ean13,";
+                    } else if ($n < 10) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->word,";
+                    } elseif ($n < 100) {
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->sentence(6),";
+                    } else {
+                        $n = rand(2, 5);
+                        $fields[] = "\t\t\t\t'{$name}' => \$faker->paragraph($n, true),";
+                    }
+                    break;
+                case "tinytext":
+                case "mediumtext":
+                case "longtext":
+                case "text":
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->text,";
+                    break;
+                case "date":
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->date('Y-m-d'),";
+                    break;
+                case "datetime":
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->date('Y-m-d').' '.\$faker->time('H:i:s'),";
+                    break;
+                case "time":
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->time('H:i:s'),";
+                    break;
+                case "timestamp":
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->unixTime(),";
+                    break;
+                case "year":
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->year(),";
+                    break;
+                case "enum":
+                case "set":
+                    $n = implode(",", $length);
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->randomElement([$n]),";
+                    break;
+                default:
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->word,";
+                    break;
+            }
+        }
+        $fields = join("\n", $fields);
+        $otherModel = join("", $otherModel);
+        //if(isset($info['']))
+        $patterns = ["%modelClass%", '%className%', '%otherModel%', '%generateCount%', '%fields%', '%otherProcess%'];
+        $replacements = [$modelClass, $className, $otherModel, $generateCount, $fields, $otherProcess];
+        $content = $this->buildField($patterns, $replacements, $content);
+        $this->writeToFile($file, $content);
+
+        $this->addSeeder();
+    }
+
+    private function addSeeder()
+    {
+        $stubFile = $this->path . 'databaseSeeder.stub';
+        $folder = BASE_PATH . '/seeders/';
+        $file = $folder . "/DatabaseSeeder.php";
+        if (!file_exists($file)) {
+            $content = file_get_contents($stubFile);
+            $this->writeToFile($file, $content);
+        }
+        $content = file_get_contents($file);
+        if (strpos($content, Str::studly($this->table) . "TableSeeder::class") !== false) {
+            return true;
+        }
+        $content = str_replace("];", "\t\t\t" . Str::studly($this->table) . "TableSeeder::class,\n\t\t];", $content);
+        $this->writeToFile($file, $content);
+    }
+
     private function makeMigrate()
     {
         $stubFile = $this->path . 'migration.stub';
@@ -1035,7 +1206,8 @@ class MakeModelCommand extends HyperfCommand
         $this->addOption('controller', 'c', InputOption::VALUE_NONE, '生成controller文件');
         $this->addOption('migrate', 'i', InputOption::VALUE_NONE, '生成迁移文件');
         $this->addOption('validator', 'l', InputOption::VALUE_NONE, '生成验证文件');
-        $this->addOption('author', 'r', InputOption::VALUE_OPTIONAL, '生成文件的作者');
+        $this->addOption('author', 'r', InputOption::VALUE_OPTIONAL, '文件作者，后面可跟空格名字，表示生成的文件作者');
+        $this->addOption('seeder', 's', InputOption::VALUE_OPTIONAL, '生成数据填充文件,后面可跟空格数字，表示生成的数据量');
         $this->addOption('force', 'f', InputOption::VALUE_NONE, '文件存在是否覆盖');
         $this->addOption('database', 'd', InputOption::VALUE_NONE, '全数据库索引自动生成全站文件');
         $this->setDescription('根据数据表生成model文件和迁移文件和控制器');
