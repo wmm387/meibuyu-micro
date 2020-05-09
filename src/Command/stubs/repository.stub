@@ -14,6 +14,7 @@ namespace App\Repository\Eloquent;
 use App\Model\%ModelClass%;
 use App\Repository\Interfaces\%ModelClass%Repository;
 use App\Validators\%ModelClass%Validator;
+use Hyperf\DbConnection\Db;
 use Meibuyu\Micro\Exceptions\HttpResponseException;
 use Meibuyu\Micro\Repository\Eloquent\BaseRepository;
 
