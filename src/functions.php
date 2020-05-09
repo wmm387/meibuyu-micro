@@ -340,27 +340,6 @@ if (!function_exists('list_go_tree')) {
     }
 }
 
-if (!function_exists('format_tree')) {
-    /**
-     * 利用递归格式化每个节点
-     * @param array $array 代转化数组
-     * @param int $pid 起始节点
-     * @return array
-     */
-    function format_tree(array $array = [], $pid = 0)
-    {
-        $result = [];
-        if (!isset($array[$pid])) {
-            return $result;
-        }
-        foreach ($array[$pid] as $item) {
-            $item['children'] = format_tree($array, $item['id']);
-            array_push($result, $item);
-        }
-        return $result;
-    }
-}
-
 if (!function_exists('flushAnnotationCache')) {
     /**
      * 刷新注解缓存，清楚注解缓存
