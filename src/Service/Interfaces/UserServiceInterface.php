@@ -24,7 +24,7 @@ interface UserServiceInterface
      * @param array $columns
      * @return mixed
      */
-    public function getByIdList(array $idList, array $columns = ['*']);
+    public function getByIdList(array $idList, array $columns = ['*'], array $relations = []);
 
     /**
      * 鉴权
