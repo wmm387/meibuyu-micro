@@ -358,6 +358,8 @@ class MakeModelCommand extends HyperfCommand
             if (isset($this->cc[$v['data_type']]) && $this->cc[$v['data_type']] != 'string') {
                 if ($this->cc[$v['data_type']] == 'timestamp') {
                     $casts .= "\t\t'" . $name . "'=>'datetime',\n";
+                } else if ($this->cc[$v['data_type']] == 'decimal') {
+                    $casts .= "\t\t'" . $name . "'=>'float',\n";
                 } else {
                     $casts .= "\t\t'" . $name . "'=>'" . $this->cc[$v['data_type']] . "',\n";
                 }
