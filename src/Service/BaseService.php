@@ -27,24 +27,24 @@ class BaseService
     protected function find($id)
     {
         $model = $this->model->find($id);
-//        if (!$model) {
-//            return Helper::fail('', '数据不存在', 404);
-//        }
         return $model;
+    }
+
+    public function all(array $columns = ['*'], array $relations = []): array
+    {
+        return $this->model->with($relations)->get($columns)->toArray();
     }
 
     /**
      * 获取一条数据
-     * @param $id
-     * @return array
+     * @param int $id
+     * @param array $columns
+     * @param array $relations
+     * @return mixed
      */
-    public function get($id)
+    public function get(int $id, array $columns = ['*'], array $relations = [])
     {
-        $model = $this->find($id);
-        if (!$model) {
-            return Helper::fail('', '数据不存在', 404);
-        }
-        return Helper::success($model);
+        return $this->model->with($relations)->find($id, $columns);
     }
 
     /**

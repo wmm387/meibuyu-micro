@@ -13,10 +13,20 @@ interface UserServiceInterface
 
     /**
      * 获取单个数据
-     * @param $id
+     * @param int $id
+     * @param array $columns
+     * @param array $relations
      * @return mixed
      */
-    public function get($id);
+    public function get(int $id, array $columns = ['*'], array $relations = []);
+
+    /**
+     * 获取全部数据
+     * @param array $columns
+     * @param array $relations
+     * @return array
+     */
+    public function all(array $columns = ['*'], array $relations = []): array;
 
     /**
      * 通过id列表获取用户数组
