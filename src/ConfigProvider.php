@@ -18,6 +18,7 @@ class ConfigProvider
                 'handler' => [
                     'http' => [
                         \Meibuyu\Micro\Exceptions\Handler\MicroExceptionHandler::class,
+                        \Meibuyu\Micro\Exceptions\Handler\QueryExceptionHandler::class,
                     ],
                 ],
             ],
