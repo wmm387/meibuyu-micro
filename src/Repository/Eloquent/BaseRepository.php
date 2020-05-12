@@ -9,6 +9,7 @@
 
 namespace Meibuyu\Micro\Repository\Eloquent;
 
+use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -195,6 +196,13 @@ abstract class BaseRepository implements RepositoryInterface
         $model = $this->find($id);
         try {
             $delete = $model->delete();
+        } catch (QueryException $e) {
+            $msg = $e->getMessage();
+            if ($e->getCode() == 23000 && strpos($msg, 'foreign key') !== false) {
+                throw new HttpResponseException('此数据下有关联的数据,不可进行操作');
+            } else {
+                throw new HttpResponseException($msg);
+            }
         } catch (\Exception $e) {
             throw new HttpResponseException($e->getMessage());
         }
