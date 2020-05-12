@@ -22,7 +22,8 @@
     "hyperf/config": "~1.1.0",
     "hyperf/logger": "~1.1.0",
     "hyperf/service-governance": "~1.1.0",
-    "fzaninotto/faker": "^1.9"
+    "fzaninotto/faker": "^1.9",
+    "phpoffice/phpspreadsheet": "^1.8"
   },
   "minimum-stability": "dev",
   "autoload": {
