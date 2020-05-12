@@ -387,3 +387,13 @@ if (!function_exists('num_2_file_size')) {
         return number_format($num, 2) . ' ' . $format;
     }
 }
+
+if (!function_exists('select_id_name')) {
+    function select_id_name($columns = [])
+    {
+        $columns = array_merge(['id', 'name'], $columns);
+        return function ($q) use ($columns) {
+            $q->select($columns);
+        };
+    }
+}

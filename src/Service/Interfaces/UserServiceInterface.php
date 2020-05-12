@@ -22,6 +22,7 @@ interface UserServiceInterface
      * 通过id列表获取用户数组
      * @param array $idList
      * @param array $columns
+     * @param array $relations 可传入['team', 'department', 'position'],分别是团队,部门和岗位
      * @return mixed
      */
     public function getByIdList(array $idList, array $columns = ['*'], array $relations = []);
@@ -37,7 +38,7 @@ interface UserServiceInterface
     /**
      * 获取用户拥有某个应用的所有权限
      * @param int $userId
-     * @param string $appName 为空获取全部权限
+     * @param string $appName 当前系统名称,为空获取全部权限
      * @return array
      */
     public function getPerms(int $userId, string $appName = null): array;
