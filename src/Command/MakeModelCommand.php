@@ -721,7 +721,7 @@ class MakeModelCommand extends HyperfCommand
             $rs = [];
             $required = "nullable";
             if ($null !== 'YES') {
-                if (!$default) {
+                if ($default !== '') {
                     $required = "required";
                     $messages[] = "\t\t'{$name}.{$required}' => '{$msgName}不能为空！'";
                 }
@@ -1136,7 +1136,7 @@ class MakeModelCommand extends HyperfCommand
                     if ($null == 'YES') {
                         $t .= "->nullable()";
                     }
-                    if ($default || $default === '0') {
+                    if ($default !== '') {
                         $t .= "->default('$default')";
                     }
                     if ($collation) {
