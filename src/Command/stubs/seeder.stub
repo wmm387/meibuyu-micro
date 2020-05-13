@@ -17,7 +17,7 @@ class %className% extends Seeder
     public function run()
     {
         $faker = Factory::create('zh-CN');
-        %modelClass%::truncate();
+        %modelClass%::query()->truncate();
         $n = %generateCount%;
         for ($i = 0; $i < $n; $i++) {
             $instance = %modelClass%::create([

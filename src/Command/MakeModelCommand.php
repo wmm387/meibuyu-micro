@@ -6,11 +6,11 @@ namespace Meibuyu\Micro\Command;
 
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Schema\MySqlBuilder;
 use Hyperf\DbConnection\Db;
 use Hyperf\Utils\Str;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -678,7 +678,7 @@ class MakeModelCommand extends HyperfCommand
             $content .= "\n\t\tRouter::delete('/{id}', 'App\Controller\\" . $modelClass . "Controller@delete');";
             if ($routes) {
                 foreach ($routes as $v) {
-                    $content .= "\n\t\tRouter::get('/$r/\{id\}', 'App\Controller\\" . $modelClass . "Controller@$v');";
+                    $content .= "\n\t\tRouter::get('/$v/\{id\}', 'App\Controller\\" . $modelClass . "Controller@$v');";
                 }
             }
             $content .= "\n\t});";
@@ -721,7 +721,7 @@ class MakeModelCommand extends HyperfCommand
             $rs = [];
             $required = "nullable";
             if ($null !== 'YES') {
-                if ($default !== '') {
+                if ($default !== '' && $default !== '0' && !$default) {
                     $required = "required";
                     $messages[] = "\t\t'{$name}.{$required}' => '{$msgName}不能为空！'";
                 }
@@ -872,7 +872,8 @@ class MakeModelCommand extends HyperfCommand
                     $n = ((isset($length[0]) && $length[0] && $length[0] < $maxNumber) ? $length[0] : $maxNumber);
                     $n = rand(1, $n);
                     $n2 = ((isset($length[1]) && $length[1] < $maxNumber) ? $length[1] : 2);
-                    $fields[] = "\t\t\t\t'{$name}' => \$faker->randomFloat($n,$n2),";
+                    $n3 = $n2 + 20;
+                    $fields[] = "\t\t\t\t'{$name}' => \$faker->randomFloat($n,$n2,$n3),";
                     break;
                 case "char":
                 case "varchar":
@@ -1136,7 +1137,7 @@ class MakeModelCommand extends HyperfCommand
                     if ($null == 'YES') {
                         $t .= "->nullable()";
                     }
-                    if ($default !== '') {
+                    if (($default && $default !== '') || $default === '0') {
                         $t .= "->default('$default')";
                     }
                     if ($collation) {
