@@ -12,6 +12,14 @@ interface UserServiceInterface
 {
 
     /**
+     * 通过用户名称模糊获取用户
+     * @param string $name
+     * @param array $columns
+     * @return array
+     */
+    public function getByName(string $name, array $columns = ['id', 'name']): array;
+
+    /**
      * 获取单个数据
      * @param int $id
      * @param array $columns
