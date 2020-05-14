@@ -397,3 +397,20 @@ if (!function_exists('select_id_name')) {
         };
     }
 }
+
+if (!function_exists('get_week_start_and_end')) {
+    function get_week_start_and_end($time = '', $first = 1)
+    {
+        //当前日期
+        if (!$time) $time = time();
+        $sdefaultDate = date("Y-m-d", $time);
+        //$first =1 表示每周星期一为开始日期 0表示每周日为开始日期
+        //获取当前周的第几天 周日是 0 周一到周六是 1 - 6
+        $w = date('w', strtotime($sdefaultDate));
+        //获取本周开始日期，如果$w是0，则表示周日，减去 6 天
+        $week_start = date('Y-m-d', strtotime("$sdefaultDate -" . ($w ? $w - $first : 6) . ' days'));
+        //本周结束日期
+        $week_end = date('Y-m-d', strtotime("$week_start +6 days"));
+        return array("week_start" => $week_start, "week_end" => $week_end);
+    }
+}
