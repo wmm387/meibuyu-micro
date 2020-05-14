@@ -61,4 +61,16 @@ interface UserServiceInterface
      */
     public function getPerms(int $userId, string $appName = null): array;
 
+    /**
+     * 获取带领导字符串数组的列表
+     * [
+     *     ['id' => -1, 'name' => '总经理'],
+     *     ['id' => -2, 'name' => '直属领导'],
+     *     ['id' => -3, 'name' => '部门领导'],
+     *     [...]
+     * ]
+     * @return array
+     */
+    public function allWithLeader(): array;
+
 }
