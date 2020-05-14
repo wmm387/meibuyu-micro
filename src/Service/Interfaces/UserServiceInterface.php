@@ -73,4 +73,13 @@ interface UserServiceInterface
      */
     public function allWithLeader(): array;
 
+    /**
+     * 获取带有领导真实信息的用户列表
+     * @param int $userId
+     * @param array $idList 可包含[-1,-2,-3]
+     * @param array $columns
+     * @return array
+     */
+    public function getListWithLeader(int $userId, array $idList = [], array $columns = ['id', 'name']): array;
+
 }
