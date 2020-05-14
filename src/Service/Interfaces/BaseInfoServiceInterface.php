@@ -28,4 +28,28 @@ interface BaseInfoServiceInterface
      */
     public function getCountryListByIdList(array $idList, array $columns = ['*']): array;
 
+    /**
+     * 通过id数组获取团队数组
+     * @param array $idList
+     * @param array $columns
+     * @return array
+     */
+    public function getTeamListByIdList(array $idList, array $columns = ['id', 'name']): array;
+
+    /**
+     * 通过id数组获取站点数组
+     * @param array $idList
+     * @param array $columns
+     * @return array
+     */
+    public function getSiteListByIdList(array $idList, array $columns = ['id', 'name']): array;
+
+    /**
+     * 通过id数组获取货币数组
+     * @param array $idList
+     * @param array $columns
+     * @return array
+     */
+    public function getCurrencyListByIdList(array $idList, array $columns = ['id', 'name']): array;
+
 }
