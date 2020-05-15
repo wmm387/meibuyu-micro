@@ -46,6 +46,13 @@ interface UserServiceInterface
     public function getByIdList(array $idList, array $columns = ['*'], array $relations = []);
 
     /**
+     * 判断是否是超级管理员
+     * @param int $userId
+     * @return bool
+     */
+    public function isSuperAdmin(int $userId): bool;
+
+    /**
      * 鉴权
      * @param int $userId
      * @param string $perm
