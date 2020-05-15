@@ -77,7 +77,7 @@ interface MaterialServiceInterface
     /**
      * 通过原料品名列表
      * @param int $page 第几页数据，默认：1
-     * @param array $relations原料品名的关联关系，支持 ["materials","material_name_category"]
+     * @param array $relations 原料品名的关联关系，支持 ["materials","material_name_category"]
      * @param int $pageSize 每页条数默认：15，最大支持100
      * @param array $columns 原料品名表的字段，默认显示全部
      * @return array
@@ -87,14 +87,14 @@ interface MaterialServiceInterface
 
     /** 根据id获取原料类型
      * @param int $materialNameCategoryId 原料类型编号
-     * @param array $relations原料类型的关联关系，支持 ["material_name"]
+     * @param array $relations 原料类型的关联关系，支持 ["material_name"]
      * @return array
      */
     public function getMaterialNameCategoryById($materialNameCategoryId, array $relations = []): array;
 
     /**
      * 获取全部原料类型
-     * @param array $relations原料类型的关联关系，支持 ["material_name"]
+     * @param array $relations 原料类型的关联关系，支持 ["material_name"]
      * @return array
      */
     public function materialNameCategories(array $relations = []): array;
