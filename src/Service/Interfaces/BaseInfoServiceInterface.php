@@ -17,9 +17,9 @@ interface BaseInfoServiceInterface
      * @param array $relations 职位的关联信息 支持["position_level","users","parent"
      * ,"children","perms"] 分别是 岗位职级，岗位用户，岗位父级，岗位子集，岗位对应的权限
      * @param array $columns 默认显示所有字段
-     * @return array
+     * @return array|null
      */
-    public function getPositionById(int $id, array $relations = [], array $columns = ['*']): array;
+    public function getPositionById(int $id, array $relations = [], array $columns = ['*']);
 
     /**
      * 通过单个id获取岗位数组
