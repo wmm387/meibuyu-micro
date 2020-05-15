@@ -35,7 +35,7 @@ interface MaterialServiceInterface
      * @param array $columns 原料表的字段，默认显示全部
      * @return array
      */
-    public function getByMaterialNameId(array $materialNameId, array $relations = [], array $columns = ['*']): array;
+    public function getByMaterialNameId($materialNameId, array $relations = [], array $columns = ['*']): array;
 
     /**
      * 通过原料列表
@@ -72,7 +72,7 @@ interface MaterialServiceInterface
      * @param array $columns 原料品名表的字段，默认显示全部
      * @return array
      */
-    public function getMaterialNameByMaterialNameCategoryId(array $materialNameCategoryId, array $relations = [], array $columns = ['*']): array;
+    public function getMaterialNameByMaterialNameCategoryId($materialNameCategoryId, array $relations = [], array $columns = ['*']): array;
 
     /**
      * 通过原料品名列表
