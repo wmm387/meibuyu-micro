@@ -14,19 +14,18 @@ interface MaterialServiceInterface
     /**
      * 获取单个数据
      * @param int $id 原料id
-     * @param array $relations 关联关系，支持：["material_name","color"]
-     * @return array
+     * @param array $columns 原料表的字段，默认显示全部
+     * @return array|null
      */
-    public function get($id, array $relations = []): array;
+    public function get($id, array $columns = ['*']);
 
     /**
      * 通过id列表获取原料数组
      * @param array $idList 原料id的列表
-     * @param array $relations 原料的关联关系，支持["material_name","color"]
      * @param array $columns 原料表的字段，默认显示全部
      * @return array
      */
-    public function getByIdList(array $idList, array $relations = [], array $columns = ['*']): array;
+    public function getByIdList(array $idList, array $columns = ['*']): array;
 
     /**
      * 通过原料品名id列表获取原料数组
@@ -46,7 +45,6 @@ interface MaterialServiceInterface
      * @return array
      */
     public function list($page = 1, array $relations = [], $pageSize = 15, array $columns = ['*']): array;
-
 
     /**
      * 获取某个原料品名
@@ -83,7 +81,6 @@ interface MaterialServiceInterface
      * @return array
      */
     public function getMaterialNamelist($page = 1, array $relations = [], $pageSize = 15, array $columns = ['*']): array;
-
 
     /** 根据id获取原料类型
      * @param int $materialNameCategoryId 原料类型编号
