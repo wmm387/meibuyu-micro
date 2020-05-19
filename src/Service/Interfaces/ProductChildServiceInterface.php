@@ -29,4 +29,12 @@ interface ProductChildServiceInterface
      */
     public function getByIdList(array $idList, array $columns = ['*'], array $relations = []): array;
 
+    /**
+     * 通过sku列表获取子产品列表
+     * @param array $skuList
+     * @param array $columns
+     * @return array
+     */
+    public function getListBySkuList(array $skuList, array $columns = ['id']);
+
 }
