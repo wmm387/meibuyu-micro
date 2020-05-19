@@ -1138,7 +1138,9 @@ class MakeModelCommand extends HyperfCommand
                         $t .= "->nullable()";
                     }
                     if (($default && $default !== '') || $default === '0') {
-                        $t .= "->default('$default')";
+                        if ($type !== 'timestamp') {
+                            $t .= "->default('$default')";
+                        }
                     }
                     if ($collation) {
                         $t .= "->collation('$collation')";
