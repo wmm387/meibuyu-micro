@@ -38,12 +38,7 @@ class AppExceptionHandler extends ExceptionHandler
         $this->stdoutLogger->error($msg);
         $this->logger->error($msg);
         $this->stdoutLogger->error($throwable->getTraceAsString());
-        // 格式化输出
-        $data = json_encode([
-            'code' => $throwable->getCode() ?: 400,
-            'msg' => $throwable->getMessage(),
-        ], JSON_UNESCAPED_UNICODE);
-        return $response->withAddedHeader('content-type', 'application/json')->withBody(new SwooleStream($data));
+        return $response->withStatus(500)->withBody(new SwooleStream($msg));
     }
 
     public function isValid(Throwable $throwable): bool
