@@ -38,7 +38,7 @@ class AppExceptionHandler extends ExceptionHandler
         $this->stdoutLogger->error($msg);
         $this->logger->error($msg);
         $this->stdoutLogger->error($throwable->getTraceAsString());
-        return $response->withHeader("Server", "H5Q-OA")->withStatus(500)->withBody(new SwooleStream($msg));
+        return $response->withStatus(500)->withBody(new SwooleStream($msg));
     }
 
     public function isValid(Throwable $throwable): bool

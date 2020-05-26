@@ -113,6 +113,10 @@ class MakeModelCommand extends HyperfCommand
             if ($v == 'migrations') {
                 continue;
             }
+            if (!$this->builder->hasTable($v)) {
+                $this->info("表" . $v . "不存在！");
+                continue;
+            }
             $this->tableIndex = $k;
             $this->input->setArgument("name", $v);
             $this->table = $v;
@@ -495,11 +499,11 @@ class MakeModelCommand extends HyperfCommand
         $list .= "\t\t\$list = \$this->model->where(function (\$q) use (\$conditions) {\n";
         foreach ($info['fields'] as $v) {
             if (Str::endsWith($v['column_name'], "_id")) {
-                $list .= "\t\t\tif(\$conditions['" . $v['column_name'] . "'] !== '') {\n";
+                $list .= "\t\t\tif(isset(\$conditions['" . $v['column_name'] . "']) && \$conditions['" . $v['column_name'] . "'] !== '') {\n";
                 $list .= "\t\t\t\t\$q->where('" . $v['column_name'] . "', \$conditions['" . $v['column_name'] . "']);\n";
                 $list .= "\t\t\t}\n";
             } else if ($v['column_name'] == 'name' || Str::contains($v['column_name'], "_name")) {
-                $list .= "\t\t\tif(\$conditions['keyword'] !== '') {\n";
+                $list .= "\t\t\tif(isset(\$conditions['" . $v['column_name'] . "']) && \$conditions['keyword'] !== '') {\n";
                 $list .= "\t\t\t\t\$q->where('" . $v['column_name'] . "', \$conditions['keyword']);\n";
                 $list .= "\t\t\t}\n";
             }
@@ -668,7 +672,7 @@ class MakeModelCommand extends HyperfCommand
                 return true;
             }
             $info = $this->currentTableStructure;
-            $tableComment = $info['table_comment'] ? $info['table_comment'] : $table;
+            $tableComment = (isset($info['table_comment']) && $info['table_comment']) ? $info['table_comment'] : $table;
             $content .= "\n\t// " . $tableComment;
             $content .= "\n\tRouter::addGroup('" . $group . "', function () {";
             $content .= "\n\t\tRouter::get('', 'App\Controller\\" . $modelClass . "Controller@index');";
@@ -1192,7 +1196,7 @@ class MakeModelCommand extends HyperfCommand
         }
         $attributes = implode("\n", $attributes);
         $tableComment = "";
-        if ($info['table_comment']) {
+        if (isset($info['table_comment']) && $info['table_comment']) {
             $tableComment = 'Db::statement("alter table `' . $table . '` comment \'' . $info['table_comment'] . '\'");';
         }
         $patterns = ["%ClassName%", '%tablename%', '%attributes%', '%tableComment%'];

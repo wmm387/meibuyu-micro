@@ -43,7 +43,7 @@ class MessageCenter
         $options = [
             'base_uri' => $this->config->get('message.center.domain') . '/api/',
             'handler' => HandlerStack::create(new CoroutineHandler()),
-            'timeout' => 5,
+            'timeout' => 60,
         ];
         $proxy = $this->config->get('message.center.proxy');
         if ($proxy) {

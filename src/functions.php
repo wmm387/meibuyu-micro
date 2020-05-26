@@ -7,7 +7,6 @@ use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-
 /**
  * 容器实例
  */
@@ -414,3 +413,27 @@ if (!function_exists('get_week_start_and_end')) {
         return array("week_start" => $week_start, "week_end" => $week_end);
     }
 }
+
+if (!function_exists('empty_string_2_null')) {
+    /**
+     * 空字符串转NULL
+     * @param array $arr
+     * @return array
+     */
+    function empty_string_2_null(array $arr)
+    {
+        if (!empty($arr)) {
+            foreach ($arr as $key => $value) {
+                if (is_array($value)) {
+                    $arr[$key] = empty_string_2_null($value);
+                } else {
+                    if ($value === '') {
+                        $arr[$key] = null;
+                    }
+                }
+            }
+        }
+        return $arr;
+    }
+}
+
