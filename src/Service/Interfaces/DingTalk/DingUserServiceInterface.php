@@ -6,20 +6,20 @@
  * Time: 15:48
  */
 
-namespace Meibuyu\Micro\Service\Interfaces;
+namespace Meibuyu\Micro\Service\Interfaces\DingTalk;
 
 interface DingUserServiceInterface
 {
-    /**
-     * 通过用户id获取单个用户信息
-     * @param int $id
-     * @return array
+    /** 通过用户id获取单个用户信息
+     * @param string $ding_user_id 钉钉用户id
+     * @return array 钉钉用户信息
      */
-    public function getById(int $id): array;
+    public function getByDingUserId($ding_user_id): array;
+
 
     /**
-     * 通过部门id获取部门用户列表
-     * @param int $departmentId
+     * 通过部门id获取部门分页用户列表
+     * @param int $departmentId 部门id
      * @param int $offset
      * @param int $size
      * @param string|null $order
@@ -30,7 +30,7 @@ interface DingUserServiceInterface
 
     /**
      * 通过Unionid获取用户id
-     * @param int $unionid
+     * @param int $unionid unionid
      * @return int
      */
     public function getUseridByUnionid(int $unionid): int;
