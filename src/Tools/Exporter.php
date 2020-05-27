@@ -326,13 +326,13 @@ class Exporter
                 }
                 break;
             case self::DOWNLOAD_TYPE_RETURN_FILE_PATH:
-                $f = $_SERVER['DOCUMENT_ROOT'] . "/tmp/data";
-                if (!file_exists($f)) {
-                    mkdir($f, 0777, true);
-                }
-                $f .= "/" . $filename;
-                $objWriter->save($f);
-                return $f;
+                $filePath = BASE_PATH . '/public/upload/';
+                !is_dir($filePath) && mkdir($filePath, 0777, true);
+                $salt = md5(date("YmdHis") . '-' . rand(1, 300));
+                $returnFilename = 'upload/' . $salt . '-' . $filename;
+                $fileName = $filePath . $salt . '-' . $filename;
+                $objWriter->save($fileName);
+                return config('app_domain') . '/' . $returnFilename;
                 break;
             default:
                 throw new \Exception('不支持此种下载类型');
