@@ -28,9 +28,12 @@ interface DingMessageServiceInterface
     /**
      * 发送工作通知消息
      * @param array $params
-     * ['msg' => {"msgtype":"text","text":{"content":"消息内容"}},'userid_list' => "5360236526369319,155724556824201930"]
-     * ['msg' => {"msgtype":"text","text":{"content":"消息内容"}},'to_all_user' => "true"]
-     * ['msg' => {"msgtype":"text","text":{"content":"消息内容"}},'dept_id_list' => "12,34"]
+     * 发送给多个用户userid_list userid用逗号分隔
+     * ['userid_list' => "016740060622772430,251201234433774424",'msg' => '钉钉消息测试','msgtype' => 'text'];
+     * 发送给所有人
+     * ['dept_id_list' => "1,2",'msg' => '钉钉消息测试','msgtype' => 'text'];
+     * 发送给多个部门 部门用逗号分隔
+     * ['to_all_user' => "true",'msg' => '钉钉消息测试','msgtype' => 'text'];
      * @return mixed
      */
     public function sendCorporationMessage($params);
