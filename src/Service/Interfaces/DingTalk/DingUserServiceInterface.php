@@ -16,22 +16,22 @@ interface DingUserServiceInterface
      */
     public function getByDingUserId($ding_user_id): array;
 
-
     /**
      * 通过部门id获取部门分页用户列表
-     * @param int $departmentId 部门id
+     * @param string $departmentId 部门id
      * @param int $offset
      * @param int $size
      * @param string|null $order
      * @param string|null $lang
      * @return array
      */
-    public function getDepartmentUsers(int $departmentId, int $offset, int $size, string $order = null, string $lang = null): array;
+    public function getDepartmentUsers(string $departmentId, int $offset, int $size, string $order = null, string $lang = null): array;
 
     /**
-     * 通过Unionid获取用户id
-     * @param int $unionid unionid
-     * @return int
+     * 通过临时授权码获取用户信息
+     * @param string $code 临时授权码
+     * @return array
      */
-    public function getUseridByUnionid(int $unionid): int;
+    public function getDingUserByTempCode($code): array;
+
 }
