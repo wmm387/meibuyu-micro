@@ -27,9 +27,10 @@ interface DingMessageServiceInterface
 
     /**
      * 发送工作通知消息
-     *
      * @param array $params
-     *
+     * ['msg' => {"msgtype":"text","text":{"content":"消息内容"}},'userid_list' => "5360236526369319,155724556824201930"]
+     * ['msg' => {"msgtype":"text","text":{"content":"消息内容"}},'to_all_user' => "true"]
+     * ['msg' => {"msgtype":"text","text":{"content":"消息内容"}},'dept_id_list' => "12,34"]
      * @return mixed
      */
     public function sendCorporationMessage($params);
