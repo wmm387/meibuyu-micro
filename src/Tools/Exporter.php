@@ -64,9 +64,10 @@ class Exporter
     public function __construct(int $export_type, $tempFilePath = "", $name = "export_data", $sheetIndex = 0)
     {
         $this->config = container(ConfigInterface::class);
-        $this->rootPath = $this->config->get('server.settings.document_root', BASE_PATH . '/public/');
+        $this->rootPath = $this->config->get('server.settings.document_root', BASE_PATH . '/public');
         if ($tempFilePath) {
-            $tempFilePath = $this->rootPath . $tempFilePath;
+            $tempFilePath = $this->rootPath . "/" . $tempFilePath;
+            //print_r($tempFilePath);
             if (file_exists($tempFilePath)) {
                 $this->fileType = ucfirst(strtolower(pathinfo($tempFilePath, PATHINFO_EXTENSION)));
                 $reader = IOFactory::createReader($this->fileType)->load($tempFilePath);

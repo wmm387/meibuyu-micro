@@ -130,11 +130,12 @@ interface BaseInfoServiceInterface
 
     /**
      * 获取所有站点的数据
+     * @param array $relations 支持的关联关系 ['team', 'country'] 分别代表 团队、国家
      * @param array $columns 要显示的字段
      * $columns = ['id', "name", "url", "country_id", "team_id"];
      * @return array 默认已keyBy('id')
      */
-    public function sites(array $columns = ['id', "name"]): array;
+    public function sites(array $relations = [], array $columns = ['id', "name"]): array;
 
 
 }
