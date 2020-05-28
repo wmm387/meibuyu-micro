@@ -105,4 +105,36 @@ interface BaseInfoServiceInterface
      */
     public function getSiteListByTeamId($teamId, array $relations = [], array $columns = ['id', "name", "url", "country_id", "team_id"]): array;
 
+    /**
+     * 返回所有货币数据
+     * @param array $columns 显示的字段名称 默认 ['id', 'name', 'code', 'symbol']
+     * @return array
+     */
+    public function currencies(array $columns = ['id', 'name', 'code', 'symbol']): array;
+
+    /**
+     * 获取所有国家数据
+     * @param array $columns 要显示的字段
+     * $columns = ['id', 'name', 'iso_code2', 'iso_code3'];
+     * @return array 默认已keyBy('id')
+     */
+    public function countries(array $columns = ['id', 'name']): array;
+
+    /**
+     * 获取所有团队数据
+     * @param array $relations 支持的关联关系 ['leader', 'sites', "users", "parent", "children"] 分别代表 负责人、团队下的站点、团队成员、父级团队，再级团队
+     * @param array $columns 要显示的字段 默认['id', 'pid', "name", "leader_user_id", "leader_user_id", "department_id"]
+     * @return array
+     */
+    public function teams(array $relations = [], array $columns = ['id', 'pid', "name", "leader_user_id", "leader_user_id", "department_id"]): array;
+
+    /**
+     * 获取所有站点的数据
+     * @param array $columns 要显示的字段
+     * $columns = ['id', "name", "url", "country_id", "team_id"];
+     * @return array 默认已keyBy('id')
+     */
+    public function sites(array $columns = ['id', "name"]): array;
+
+
 }
