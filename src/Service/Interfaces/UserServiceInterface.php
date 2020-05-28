@@ -23,7 +23,7 @@ interface UserServiceInterface
      * 获取单个数据
      * @param int $id
      * @param array $columns
-     * @param array $relations 可传入['teams', 'department', 'position'],分别是团队,部门和岗位
+     * @param array $relations 可传入['teams', 'departments', 'position'],分别是团队,部门和岗位
      * @return mixed
      */
     public function get(int $id, array $columns = ['*'], array $relations = []);
@@ -31,7 +31,7 @@ interface UserServiceInterface
     /**
      * 获取全部数据
      * @param array $columns
-     * @param array $relations 可传入['teams', 'department', 'position'],分别是团队,部门和岗位
+     * @param array $relations 可传入['teams', 'departments', 'position'],分别是团队,部门和岗位
      * @return array
      */
     public function all(array $columns = ['*'], array $relations = []): array;
@@ -40,7 +40,7 @@ interface UserServiceInterface
      * 通过id列表获取用户数组
      * @param array $idList
      * @param array $columns
-     * @param array $relations 可传入['teams', 'department', 'position'],分别是团队,部门和岗位
+     * @param array $relations 可传入['teams', 'departments', 'position'],分别是团队,部门和岗位
      * @return mixed
      */
     public function getByIdList(array $idList, array $columns = ['*'], array $relations = []);
