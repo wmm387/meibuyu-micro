@@ -46,6 +46,14 @@ interface UserServiceInterface
     public function getByIdList(array $idList, array $columns = ['*'], array $relations = []);
 
     /**
+     * 通过部门id列表获取用户数组(包括子部门用户)
+     * @param array $deptIds
+     * @param array $columns 用户字段,默认['id', 'name', 'department_id']
+     * @return array
+     */
+    public function getListByDeptIds(array $deptIds, $columns = []);
+
+    /**
      * 判断是否是超级管理员
      * @param int $userId
      * @return bool
