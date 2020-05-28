@@ -9,12 +9,13 @@
 
 namespace Meibuyu\Micro\Tools;
 
+use Hyperf\Contract\ConfigInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-
 
 class Exporter
 {
@@ -37,10 +38,7 @@ class Exporter
     CONST EXPORTER_TYPE_XLS = 2;
     CONST EXPORTER_TYPE_XLSX = 3;
 
-    /**
-     * @var string 设置非保护区间 例如"A1:B1";从A列B列第一行到数据结束行不需要保护
-     */
-    private $unprotectRange = "";
+    private $rootPath;
     private $beginRowIndex = 0;
     private $fileType = 'Xlsx';
     private $isFromTemplate = false;
@@ -50,47 +48,54 @@ class Exporter
     private $name = "";
     private $beginColumnChar = "A";
 
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
 
     /**
      * Exporter constructor.
-     * @param $export_type 导出者类型 支持 Exporter::EXPORTER_TYPE_CSV Exporter::EXPORTER_TYPE_XLS Exporter::EXPORTER_TYPE_XLSX
-     * @param int $sheetIndex sheet索引
-     * @param string $name $sheet表
-     * @param string $fromTemplateFile 从模板中创建 导出者
-     * @throws Exception
+     * @param int $export_type 类型
+     * @param string $tempFilePath 模板文件地址
+     * @param string $name 名称
+     * @param int $sheetIndex
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     * @throws \Exception
      */
-    public function __construct($export_type, $sheetIndex = 0, $name = "export_data", $fromTemplateFile = "")
+    public function __construct(int $export_type, $tempFilePath = "", $name = "export_data", $sheetIndex = 0)
     {
-        $reader = null;
-        switch ($export_type) {
-            case self::EXPORTER_TYPE_CSV:
-                $this->fileType = "Csv";
-                break;
-            case self::EXPORTER_TYPE_XLS:
-                $this->fileType = "Xls";
-                break;
-            case self::EXPORTER_TYPE_XLSX:
-                $this->fileType = "Xlsx";
-                break;
-            default:
-                throw new Exception("类型不支持。");
-                break;
-        }
-        if ($fromTemplateFile && !file_exists($fromTemplateFile)) {
-            throw new Exception("模板文件不存在。");
-            $this->fileType = ucfirst(strtolower(pathinfo($fromTemplateFile, PATHINFO_EXTENSION)));
-            $reader = IOFactory::createReaderForFile($fromTemplateFile);
-            $reader = $reader->load($fromTemplateFile);
-            $this->isFromTemplate = true;
-        }
-        if (!$this->isFromTemplate && empty($reader)) {
-            $reader = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $this->config = container(ConfigInterface::class);
+        $this->rootPath = $this->config->get('server.settings.document_root', BASE_PATH . '/public/');
+        if ($tempFilePath) {
+            $tempFilePath = $this->rootPath . $tempFilePath;
+            if (file_exists($tempFilePath)) {
+                $this->fileType = ucfirst(strtolower(pathinfo($tempFilePath, PATHINFO_EXTENSION)));
+                $reader = IOFactory::createReader($this->fileType)->load($tempFilePath);
+                $this->isFromTemplate = true;
+            } else {
+                throw new \Exception("模板文件不存在");
+            }
+        } else {
+            switch ($export_type) {
+                case self::EXPORTER_TYPE_CSV:
+                    $this->fileType = "Csv";
+                    break;
+                case self::EXPORTER_TYPE_XLS:
+                    $this->fileType = "Xls";
+                    break;
+                case self::EXPORTER_TYPE_XLSX:
+                    $this->fileType = "Xlsx";
+                    break;
+                default:
+                    throw new \Exception("类型不支持。");
+                    break;
+            }
+            $reader = new Spreadsheet();
         }
         $this->name = $name;
-        $sheet = $reader->getSheet($sheetIndex);
-        $sheet->setTitle($name);
+        $this->sheet = $reader->getSheet($sheetIndex);
         $this->reader = $reader;
-        $this->sheet = $sheet;
         $this->sheetIndex = $sheetIndex;
     }
 
@@ -101,7 +106,6 @@ class Exporter
      */
     public function setUnprotectRange($unprotectRange = "")
     {
-        $this->unprotectRange = $this->unprotectRange;
         $this->sheet->getProtection()->setSheet(true);
         if ($unprotectRange) {
             $this->sheet->getStyle($unprotectRange)
@@ -170,7 +174,7 @@ class Exporter
     }
 
     /**
-     * 根据名字sheet索引激化切换到 该表
+     * 根据sheet索引切换到对应sheet
      * @param int $sheetIndex
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
@@ -191,12 +195,12 @@ class Exporter
      */
     public function append(array $data, $keys = [])
     {
-
-        //一维数组转二维
+        // 一维数组转二维
         if (!(isset($data[0]) && is_array($data[0]))) {
             $data = [$data];
         }
-        if ($keys) {
+
+        if (count($keys)) {
             foreach ($data as $k => $v) {
                 $data[$k] = $this->getKeyValue($v, $keys);
             }
@@ -204,11 +208,12 @@ class Exporter
 
         $this->sheet->fromArray($data, null, $this->beginColumnChar . $this->beginRowIndex);
         //美化样式
-        $this->applyStyle($this->beginColumnChar . $this->beginRowIndex . ":" . $this->sheet->getHighestColumn() . ($this->beginRowIndex + count($data)));
+        $this->applyStyle($this->beginColumnChar . $this->beginRowIndex . ":" . $this->sheet->getHighestColumn() . ($this->beginRowIndex + count($data) - 1));
         $this->beginRowIndex += count($data);
     }
 
-    /**根据key提取数据
+    /**
+     * 根据key提取数据
      * @param array $data
      * @param array $keys
      * @return array
@@ -271,11 +276,12 @@ class Exporter
     }
 
     /**
-     *下载导出的文件
+     * 下载导出的文件
      * @param int $downloadType 下载形式 支持 Exporter::DOWNLOAD_TYPE_STREAM Exporter::DOWNLOAD_TYPE_RETURN_FILE_PATH Exporter::DOWNLOAD_TYPE_SAVE_AND_DOWNLOAD
      * @param string $filename 下载的文件名
-     * @return string
+     * @return mixed | void
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     * @throws \Exception
      */
     public function download(int $downloadType, $filename = "")
     {
@@ -284,11 +290,11 @@ class Exporter
             $filename = $this->name ? $this->name : rand(1, 9999999) . time() . rand(1, 9999999);
         }
         $filename .= "." . strtolower($this->fileType);
+        $this->reader->setActiveSheetIndex(0);
         $objWriter = IOFactory::createWriter($this->reader, $this->fileType);
         switch ($downloadType) {
             case self::DOWNLOAD_TYPE_STREAM:
             case self::DOWNLOAD_TYPE_SAVE_AND_DOWNLOAD:
-
                 if ($this->fileType == 'Xlsx') {
                     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 } elseif ($this->fileType == 'Xls') {
@@ -304,7 +310,7 @@ class Exporter
                 if ($downloadType == self::DOWNLOAD_TYPE_STREAM) {
                     $objWriter->save('php://output');
                 } else {
-                    $f = $_SERVER['DOCUMENT_ROOT'] . "/tmp/data";
+                    $f = $this->rootPath . "/export";
                     if (!file_exists($f)) {
                         mkdir($f, 0777, true);
                     }
@@ -326,13 +332,11 @@ class Exporter
                 }
                 break;
             case self::DOWNLOAD_TYPE_RETURN_FILE_PATH:
-                $filePath = BASE_PATH . '/public/upload/';
+                $filePath = $this->rootPath . "/export/";
                 !is_dir($filePath) && mkdir($filePath, 0777, true);
-                $salt = md5(date("YmdHis") . '-' . rand(1, 300));
-                $returnFilename = 'upload/' . $salt . '-' . $filename;
-                $fileName = $filePath . $salt . '-' . $filename;
+                $fileName = $filePath . date('YmdHis') . '-' . $filename;
                 $objWriter->save($fileName);
-                return config('app_domain') . '/' . $returnFilename;
+                return $this->config->get('app_domain') . str_replace($this->rootPath, '', $fileName);
                 break;
             default:
                 throw new \Exception('不支持此种下载类型');
@@ -351,10 +355,11 @@ class Exporter
 
     /**
      * 返回原生的PhpOffice Reader 手动处理数据
-     * @return null|\PhpOffice\PhpSpreadsheet\Spreadsheet
+     * @return null|Spreadsheet
      */
     public function getReader()
     {
         return $this->reader;
     }
+
 }
