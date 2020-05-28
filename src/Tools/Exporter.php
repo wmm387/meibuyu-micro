@@ -37,7 +37,10 @@ class Exporter
     CONST EXPORTER_TYPE_CSV = 1;
     CONST EXPORTER_TYPE_XLS = 2;
     CONST EXPORTER_TYPE_XLSX = 3;
-
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
     private $rootPath;
     private $beginRowIndex = 0;
     private $fileType = 'Xlsx';
@@ -47,11 +50,6 @@ class Exporter
     private $sheetIndex = 0;
     private $name = "";
     private $beginColumnChar = "A";
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
 
     /**
      * Exporter constructor.
@@ -196,8 +194,11 @@ class Exporter
     public function append(array $data, $keys = [])
     {
         // 一维数组转二维
-        if (!(isset($data[0]) && is_array($data[0]))) {
-            $data = [$data];
+        foreach ($data as $v) {
+            if (!is_array($v)) {
+                $data = [$data];
+            }
+            break;
         }
 
         if (count($keys)) {
