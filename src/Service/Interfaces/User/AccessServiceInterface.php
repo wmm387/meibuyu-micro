@@ -47,4 +47,11 @@ interface AccessServiceInterface
      */
     public function getPositions($userId, $tree = false, $withUser = false);
 
+    /**
+     * 获取鉴权的用户id列表
+     * @param int $userId 当前用户id
+     * @return array|string 如果是全部用户返回  'all'字符串
+     */
+    public function getUserIds($userId);
+
 }
