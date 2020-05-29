@@ -38,4 +38,13 @@ interface AccessServiceInterface
      */
     public function getDepartments($userId, $tree = false, $withUser = false);
 
+    /**
+     * 获取鉴权的岗位
+     * @param $userId
+     * @param bool $tree 是否返回树状结构
+     * @param bool $withUser
+     * @return array 已进行keyBy('id')处理,返回树状结构时,keyBy无效
+     */
+    public function getPositions($userId, $tree = false, $withUser = false);
+
 }
