@@ -127,6 +127,7 @@ class Exporter
         if ($activeSheet) {
             $this->setSheetByName($name);
         }
+        return $this;
     }
 
     /** 根据名字sheet表名激化切换到 该表
