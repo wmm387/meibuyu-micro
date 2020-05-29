@@ -111,6 +111,7 @@ class Exporter
                 ->getProtection()
                 ->setLocked(Protection::PROTECTION_UNPROTECTED);
         }
+        return $this;
     }
 
     /**
@@ -137,6 +138,7 @@ class Exporter
         $this->sheet = $this->reader->setActiveSheetIndexByName($name);
         $this->sheetIndex = $this->reader->getActiveSheetIndex();
         $this->resetRowIndex();
+        return $this;
     }
 
     /**
@@ -145,6 +147,7 @@ class Exporter
     private function resetRowIndex()
     {
         $this->beginRowIndex = 1;
+        return $this;
     }
 
     /**
@@ -162,6 +165,7 @@ class Exporter
     public function setBeginColumnChar($char = "A")
     {
         $this->beginColumnChar = $char;
+        return $this;
     }
 
     /**设置从哪一行开始填充数据
@@ -170,6 +174,7 @@ class Exporter
     public function setBeginRowIndex($index = 1)
     {
         $this->beginRowIndex = $index;
+        return $this;
     }
 
     /**
@@ -182,6 +187,7 @@ class Exporter
         $this->sheet = $this->reader->setActiveSheetIndex($sheetIndex);
         $this->sheetIndex = $sheetIndex;
         $this->resetRowIndex();
+        return $this;
     }
 
     /**
@@ -212,6 +218,7 @@ class Exporter
         //美化样式
         $this->applyStyle($this->beginColumnChar . $this->beginRowIndex . ":" . $this->sheet->getHighestColumn() . ($this->beginRowIndex + count($data) - 1));
         $this->beginRowIndex += count($data);
+        return $this;
     }
 
     /**
