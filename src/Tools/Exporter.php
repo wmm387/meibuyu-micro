@@ -42,7 +42,7 @@ class Exporter
      */
     protected $config;
     private $rootPath;
-    private $beginRowIndex = 0;
+    private $beginRowIndex = 1;
     private $fileType = 'Xlsx';
     private $isFromTemplate = false;
     private $sheet = null;
